@@ -574,3 +574,129 @@ img { max-width: 100%; display: block; }
   .reviews-row { grid-auto-columns: minmax(0, 1fr); grid-auto-flow: row; grid-template-columns: repeat(3, 1fr); overflow: visible; }
   .opt-grid { grid-template-columns: repeat(4, 1fr); }
 }
+
+
+/* ============================================================
+   MARKET-GRADE ADDITIONS — views, offers, bookings, PWA UI
+   ============================================================ */
+
+/* ===== Views (SPA) ===== */
+.view[hidden] { display: none; }
+.view-top { padding-top: clamp(28px, 5vw, 48px); }
+
+/* ===== Offers ticker ===== */
+.offers-bar {
+  position: sticky; top: 62px; z-index: 40;
+  background: var(--maroon-deep); color: #ffe9c7;
+  overflow: hidden; white-space: nowrap; font-size: 13px; font-weight: 500;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.offers-track { display: inline-flex; gap: 48px; padding: 9px 24px; animation: ticker 26s linear infinite; }
+.offers-track span { display: inline-block; }
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.offers-bar:hover .offers-track { animation-play-state: paused; }
+
+/* ===== Search & filters ===== */
+.search-bar { max-width: 480px; margin: 0 auto 26px; }
+.search-bar input {
+  width: 100%; padding: 14px 18px; border-radius: 999px; font-family: inherit; font-size: 15px;
+  border: 2px solid var(--line); background: #fff; color: var(--ink);
+}
+.search-bar input:focus { outline: none; border-color: var(--rose); }
+.filter-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 26px; }
+.filter-chip {
+  border: 2px solid var(--line); background: #fff; color: var(--ink);
+  font-family: inherit; font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 999px; cursor: pointer; transition: .15s;
+}
+.filter-chip.active { background: var(--grad-festive); color: #fff; border-color: transparent; }
+.center-cta { text-align: center; margin-top: 26px; }
+
+/* ===== Venue visual override (theme gradient + favourite) ===== */
+.venue-visual { position: relative; }
+.venue-visual .vv-emoji { font-size: 40px; }
+.fav-btn {
+  position: absolute; top: 10px; right: 10px;
+  width: 36px; height: 36px; border-radius: 50%; border: none; cursor: pointer;
+  background: rgba(255,255,255,.85); color: #c7c0c4; font-size: 18px; line-height: 1;
+  display: grid; place-items: center; transition: .15s; box-shadow: var(--shadow-sm);
+}
+.fav-btn.on { color: var(--rose); transform: scale(1.08); }
+.venue-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.rating-badge { background: rgba(43,138,62,.12); color: #2b8a3e; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 8px; white-space: nowrap; }
+.amenities { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; margin: 4px 0 12px; }
+.amenity { font-size: 12px; color: var(--muted); }
+.venues-detailed .venue-card { grid-template-columns: 1fr; }
+.venues-detailed .venue-visual { min-height: 120px; }
+
+/* ===== My Bookings ===== */
+#bookingsList { max-width: 720px; margin: 0 auto; display: grid; gap: 14px; }
+.booking-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow-sm); }
+.bc-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.bc-head > div { display: flex; align-items: center; gap: 8px; }
+.bc-emoji { font-size: 22px; }
+.bc-head strong { font-size: 16px; }
+.status { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: .5px; }
+.status-requested { background: rgba(244,183,64,.18); color: var(--gold-deep); }
+.status-confirmed { background: rgba(43,138,62,.14); color: #2b8a3e; }
+.status-completed { background: rgba(59,91,219,.14); color: #3b5bdb; }
+.status-cancelled { background: rgba(214,51,108,.12); color: var(--rose); }
+.bc-meta { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 12px 0; font-size: 13px; color: var(--muted); }
+.bc-addons { font-size: 13px; color: var(--ink); margin-bottom: 12px; }
+.bc-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 12px; }
+.bc-price { display: flex; flex-direction: column; }
+.bc-price span { font-size: 11px; color: var(--muted); }
+.bc-price strong { font-size: 18px; color: var(--maroon); }
+.bc-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.btn-danger { background: rgba(214,51,108,.1); color: var(--rose); }
+.btn-danger:hover { background: rgba(214,51,108,.18); }
+
+/* Empty state */
+.empty { text-align: center; padding: 50px 20px; max-width: 420px; margin: 0 auto; }
+.empty-emoji { font-size: 54px; }
+.empty h3 { font-size: 20px; margin-top: 10px; }
+.empty p { color: var(--muted); margin: 6px 0 20px; }
+
+/* ===== Enquiry form ===== */
+.enquiry { max-width: 480px; margin: 30px auto 0; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14); border-radius: var(--radius); padding: 22px; text-align: left; }
+.enquiry h3 { color: #fff; font-size: 17px; margin-bottom: 14px; }
+.enq-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.enq-row input { flex: 1; min-width: 140px; }
+.enquiry input, .enquiry textarea {
+  width: 100%; padding: 12px 14px; border-radius: 12px; border: none; font-family: inherit; font-size: 15px;
+  background: rgba(255,255,255,.92); color: var(--ink); margin-bottom: 10px;
+}
+.enquiry input:focus, .enquiry textarea:focus { outline: 2px solid var(--gold); }
+.enquiry .btn { width: 100%; }
+
+/* ===== Add-on option qty ===== */
+.addon-opt .o-ic svg { width: 22px; height: 22px; stroke: var(--maroon); }
+.addon-price small { display: block; font-size: 10px; color: var(--muted); font-weight: 500; }
+.qty { display: inline-flex; align-items: center; gap: 10px; background: var(--cream); border: 1px solid var(--line); border-radius: 999px; padding: 3px 6px; margin-right: 6px; }
+.qty.hide { display: none; }
+.qty button { width: 26px; height: 26px; border: none; border-radius: 50%; background: var(--grad-festive); color: #fff; font-size: 16px; cursor: pointer; line-height: 1; }
+.qty span { min-width: 16px; text-align: center; font-weight: 700; font-size: 14px; }
+
+/* slot chip disabled */
+.chip.disabled, .chip[disabled] { opacity: .4; cursor: not-allowed; text-decoration: line-through; }
+
+/* ===== Floating WhatsApp ===== */
+.fab-whatsapp {
+  position: fixed; right: 16px; bottom: 84px; z-index: 55;
+  width: 52px; height: 52px; border-radius: 50%; background: #25d366; color: #fff;
+  display: grid; place-items: center; font-size: 24px; text-decoration: none;
+  box-shadow: 0 10px 26px rgba(37,211,102,.5); transition: transform .15s;
+}
+.fab-whatsapp:hover { transform: scale(1.08); }
+
+/* ===== Footer links ===== */
+.footer-links { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin: 14px 0; }
+.footer-links a { font-size: 13px; color: var(--muted); }
+.footer-links a:hover { color: var(--rose); }
+
+/* ===== Responsive ===== */
+@media (min-width: 720px) {
+  .fab-whatsapp { bottom: 24px; }
+  .offers-bar { top: 66px; }
+  .venues-detailed { grid-template-columns: repeat(2, 1fr); }
+  .venues-detailed .venue-card { grid-template-columns: 130px 1fr; }
+}

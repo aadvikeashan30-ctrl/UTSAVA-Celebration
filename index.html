@@ -2,153 +2,216 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#7a1136" />
-  <meta name="description" content="UTSAVA Celebration — Private theatre & banquet celebration booking in Bingetown, Bangalore. Birthdays, anniversaries, proposals, weddings, naming ceremonies & more." />
+  <meta name="description" content="UTSAVA Celebration — Book a private theatre or banquet hall in Bingetown, Bangalore. Birthdays, anniversaries, proposals, weddings, naming ceremonies & more with decoration, cake, photography & effects." />
   <title>UTSAVA Celebration · Private Theatre & Event Booking, Bangalore</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="UTSAVA" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
 
   <!-- ===== Top App Bar ===== -->
   <header class="appbar" id="appbar">
-    <a href="#home" class="brand" aria-label="UTSAVA Celebration home">
+    <a href="#/home" class="brand" aria-label="UTSAVA Celebration home">
       <span class="brand-mark">U</span>
-      <span class="brand-text">
-        <strong>UTSAVA</strong>
-        <em>Celebration</em>
-      </span>
+      <span class="brand-text"><strong>UTSAVA</strong><em>Celebration</em></span>
     </a>
     <nav class="nav-links" aria-label="Primary">
-      <a href="#occasions">Occasions</a>
-      <a href="#venues">Venues</a>
-      <a href="#addons">Add-ons</a>
-      <a href="#reviews">Reviews</a>
-      <a href="#contact">Contact</a>
+      <a href="#/home" data-route="home">Home</a>
+      <a href="#/occasions" data-route="occasions">Occasions</a>
+      <a href="#/venues" data-route="venues">Venues</a>
+      <a href="#/gallery" data-route="gallery">Gallery</a>
+      <a href="#/bookings" data-route="bookings">My Bookings</a>
     </nav>
     <button class="btn btn-gold btn-sm" id="navBookBtn">Book Now</button>
   </header>
 
-  <!-- ===== Hero ===== -->
-  <section class="hero" id="home">
-    <div class="hero-glow"></div>
-    <div class="hero-content">
-      <span class="pill">📍 Bingetown, Bangalore · 4.9★ · Open 7 Days</span>
-      <h1>Celebrate in a<br><span class="grad-text">Private Theatre</span><br>& Grand Hall</h1>
-      <p class="hero-sub">Surprise birthdays, romantic dates, anniversaries, weddings & more — décor, cake, photography & effects, all bookable online.</p>
-      <div class="hero-cta">
-        <button class="btn btn-gold" id="heroBookBtn">Book Your Celebration</button>
-        <a class="btn btn-ghost" href="#occasions">Explore Occasions</a>
+  <!-- ===== Offers ticker ===== -->
+  <div class="offers-bar" id="offersBar" aria-label="Current offers"></div>
+
+  <!-- ============================================================
+       VIEW: HOME
+       ============================================================ -->
+  <main class="view" id="view-home">
+    <section class="hero" id="home">
+      <div class="hero-glow"></div>
+      <div class="hero-content">
+        <span class="pill">📍 Bingetown, Bangalore · 4.9★ · Open 7 Days</span>
+        <h1>Celebrate in a<br><span class="grad-text">Private Theatre</span><br>& Grand Hall</h1>
+        <p class="hero-sub">Surprise birthdays, romantic dates, anniversaries, weddings & more — décor, cake, photography & effects, all bookable online.</p>
+        <div class="hero-cta">
+          <button class="btn btn-gold" id="heroBookBtn">Book Your Celebration</button>
+          <a class="btn btn-ghost" href="#/occasions">Explore Occasions</a>
+        </div>
+        <div class="hero-stats" id="heroStats"></div>
       </div>
-      <div class="hero-stats" id="heroStats"></div>
-    </div>
-    <div class="hero-confetti" aria-hidden="true"></div>
-  </section>
+      <div class="hero-confetti" aria-hidden="true"></div>
+    </section>
 
-  <!-- ===== Occasions ===== -->
-  <section class="section" id="occasions">
-    <div class="section-head">
-      <span class="kicker">What are we celebrating?</span>
-      <h2>Occasions we make special</h2>
-      <p>Tap an occasion to start booking instantly.</p>
-    </div>
-    <div class="grid events-grid" id="eventsGrid"></div>
-  </section>
+    <section class="section">
+      <div class="section-head">
+        <span class="kicker">What are we celebrating?</span>
+        <h2>Occasions we make special</h2>
+        <p>Tap an occasion to start booking instantly.</p>
+      </div>
+      <div class="grid events-grid" id="eventsGridHome"></div>
+    </section>
 
-  <!-- ===== How it works ===== -->
-  <section class="section section-tint" id="how">
-    <div class="section-head">
-      <span class="kicker">Simple & quick</span>
-      <h2>How it works</h2>
-      <p>Book your celebration in 4 easy steps.</p>
-    </div>
-    <div class="grid how-grid" id="howGrid"></div>
-  </section>
+    <section class="section section-tint">
+      <div class="section-head">
+        <span class="kicker">Simple & quick</span>
+        <h2>How it works</h2>
+        <p>Book your celebration in 4 easy steps.</p>
+      </div>
+      <div class="grid how-grid" id="howGrid"></div>
+    </section>
 
-  <!-- ===== Venues ===== -->
-  <section class="section" id="venues">
-    <div class="section-head">
-      <span class="kicker">Our spaces</span>
-      <h2>Choose your venue</h2>
-      <p>An intimate private theatre or a grand banquet hall.</p>
-    </div>
-    <div class="grid venues-grid" id="venuesGrid"></div>
-  </section>
+    <section class="section">
+      <div class="section-head">
+        <span class="kicker">Our spaces</span>
+        <h2>Featured venues</h2>
+        <p>An intimate private theatre or a grand banquet hall.</p>
+      </div>
+      <div class="grid venues-grid" id="venuesGridHome"></div>
+    </section>
 
-  <!-- ===== Services ===== -->
-  <section class="section section-tint" id="services">
-    <div class="section-head">
-      <span class="kicker">What we offer</span>
-      <h2>Everything under one roof</h2>
-      <p>One team, every detail — so you can simply enjoy the moment.</p>
-    </div>
-    <div class="grid services-grid" id="servicesGrid"></div>
-  </section>
+    <section class="section section-tint">
+      <div class="section-head">
+        <span class="kicker">What we offer</span>
+        <h2>Everything under one roof</h2>
+        <p>One team, every detail — so you can simply enjoy the moment.</p>
+      </div>
+      <div class="grid services-grid" id="servicesGrid"></div>
+    </section>
 
-  <!-- ===== Add-ons ===== -->
-  <section class="section" id="addons">
-    <div class="section-head">
-      <span class="kicker">Make it extra special</span>
-      <h2>Popular add-ons</h2>
-      <p>Cakes, effects, photography & more — add during booking.</p>
-    </div>
-    <div class="grid addons-grid" id="addonsGrid"></div>
-  </section>
+    <section class="section">
+      <div class="section-head">
+        <span class="kicker">Make it extra special</span>
+        <h2>Popular add-ons</h2>
+        <p>Cakes, effects, photography & more — add during booking.</p>
+      </div>
+      <div class="grid addons-grid" id="addonsGrid"></div>
+    </section>
 
-  <!-- ===== Gallery ===== -->
-  <section class="section section-tint" id="gallery">
-    <div class="section-head">
-      <span class="kicker">Inspiration</span>
-      <h2>A glimpse of our work</h2>
-      <p>Themes our team brings to life.</p>
-    </div>
-    <div class="gallery" id="galleryGrid"></div>
-  </section>
+    <section class="section section-tint">
+      <div class="section-head">
+        <span class="kicker">Inspiration</span>
+        <h2>A glimpse of our work</h2>
+        <p>Themes our team brings to life.</p>
+      </div>
+      <div class="gallery" id="galleryGridHome"></div>
+      <div class="center-cta"><a class="btn btn-ghost dark" href="#/gallery">View full gallery</a></div>
+    </section>
 
-  <!-- ===== Timing / Packages ===== -->
-  <section class="section" id="timing">
-    <div class="section-head">
-      <span class="kicker">Slots & packages</span>
-      <h2>Timings that fit you</h2>
-      <p>Open 9 AM to 11 PM, all 7 days of the week.</p>
-    </div>
-    <div class="grid packages-grid" id="packagesGrid"></div>
-  </section>
+    <section class="section">
+      <div class="section-head">
+        <span class="kicker">Slots & packages</span>
+        <h2>Timings that fit you</h2>
+        <p>Open 9 AM to 11 PM, all 7 days of the week.</p>
+      </div>
+      <div class="grid packages-grid" id="packagesGrid"></div>
+    </section>
 
-  <!-- ===== Reviews ===== -->
-  <section class="section section-tint" id="reviews">
-    <div class="section-head">
-      <span class="kicker">Loved by guests</span>
-      <h2>What our guests say</h2>
-      <p id="reviewsSummary">Rated 4.9 / 5 across thousands of celebrations.</p>
-    </div>
-    <div class="reviews-row" id="reviewsRow"></div>
-  </section>
+    <section class="section section-tint">
+      <div class="section-head">
+        <span class="kicker">Loved by guests</span>
+        <h2>What our guests say</h2>
+        <p id="reviewsSummary"></p>
+      </div>
+      <div class="reviews-row" id="reviewsRow"></div>
+    </section>
 
-  <!-- ===== Why us ===== -->
-  <section class="section" id="why">
-    <div class="grid why-grid" id="whyGrid"></div>
-  </section>
+    <section class="section">
+      <div class="grid why-grid" id="whyGrid"></div>
+    </section>
 
-  <!-- ===== FAQ ===== -->
-  <section class="section section-tint" id="faq">
-    <div class="section-head">
-      <span class="kicker">Good to know</span>
-      <h2>Frequently asked</h2>
-    </div>
-    <div class="faq-list" id="faqList"></div>
-  </section>
+    <section class="section section-tint">
+      <div class="section-head"><span class="kicker">Good to know</span><h2>Frequently asked</h2></div>
+      <div class="faq-list" id="faqList"></div>
+    </section>
 
-  <!-- ===== Contact ===== -->
-  <section class="section section-dark" id="contact">
-    <div class="section-head">
-      <span class="kicker light">Get in touch</span>
-      <h2>Let's plan together</h2>
-      <p>Call, WhatsApp, email or book online — we reply quickly.</p>
-    </div>
-    <div class="contact-cards" id="contactCards"></div>
-    <button class="btn btn-gold btn-lg" id="contactBookBtn">Start Booking</button>
-  </section>
+    <section class="section section-dark" id="contact">
+      <div class="section-head">
+        <span class="kicker light">Get in touch</span>
+        <h2>Let's plan together</h2>
+        <p>Call, WhatsApp, email or book online — we reply quickly.</p>
+      </div>
+      <div class="contact-cards" id="contactCards"></div>
+      <form class="enquiry" id="enquiryForm" novalidate>
+        <h3>Quick enquiry</h3>
+        <div class="enq-row">
+          <input type="text" id="enqName" placeholder="Your name" required />
+          <input type="tel" id="enqPhone" placeholder="Phone (10 digits)" required />
+        </div>
+        <textarea id="enqMsg" rows="2" placeholder="Tell us about your celebration…"></textarea>
+        <button type="submit" class="btn btn-gold">Send Enquiry</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       VIEW: OCCASIONS
+       ============================================================ -->
+  <main class="view" id="view-occasions" hidden>
+    <section class="section view-top">
+      <div class="section-head">
+        <span class="kicker">Occasions</span>
+        <h2>What are we celebrating?</h2>
+        <p>Choose an occasion to begin your booking.</p>
+      </div>
+      <div class="search-bar">
+        <input type="search" id="occSearch" placeholder="Search occasions… e.g. birthday" aria-label="Search occasions" />
+      </div>
+      <div class="grid events-grid" id="eventsGridAll"></div>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       VIEW: VENUES
+       ============================================================ -->
+  <main class="view" id="view-venues" hidden>
+    <section class="section view-top">
+      <div class="section-head">
+        <span class="kicker">Our spaces</span>
+        <h2>Choose your venue</h2>
+        <p>Browse details, amenities & ratings.</p>
+      </div>
+      <div class="grid venues-grid venues-detailed" id="venuesGridAll"></div>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       VIEW: GALLERY
+       ============================================================ -->
+  <main class="view" id="view-gallery" hidden>
+    <section class="section view-top">
+      <div class="section-head">
+        <span class="kicker">Inspiration</span>
+        <h2>Our gallery</h2>
+        <p>Filter by celebration type.</p>
+      </div>
+      <div class="filter-row" id="galleryFilters"></div>
+      <div class="gallery" id="galleryGridAll"></div>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       VIEW: MY BOOKINGS
+       ============================================================ -->
+  <main class="view" id="view-bookings" hidden>
+    <section class="section view-top">
+      <div class="section-head">
+        <span class="kicker">Purchase history</span>
+        <h2>My Bookings</h2>
+        <p>Track, manage or re-book your celebrations.</p>
+      </div>
+      <div id="bookingsList"></div>
+    </section>
+  </main>
 
   <!-- ===== Footer ===== -->
   <footer class="footer">
@@ -157,16 +220,23 @@
       <span class="brand-text"><strong>UTSAVA</strong><em>Celebration</em></span>
     </div>
     <p>Turning moments into memories.</p>
+    <nav class="footer-links">
+      <a href="#/home">Home</a><a href="#/occasions">Occasions</a><a href="#/venues">Venues</a>
+      <a href="#/gallery">Gallery</a><a href="#/bookings">My Bookings</a>
+    </nav>
     <small>© <span id="year"></span> UTSAVA Celebration · Bingetown, Bangalore</small>
   </footer>
 
+  <!-- ===== Floating WhatsApp ===== -->
+  <a class="fab-whatsapp" id="fabWhatsapp" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">💬</a>
+
   <!-- ===== Bottom Nav (mobile) ===== -->
   <nav class="bottom-nav" aria-label="Mobile">
-    <a href="#home" class="active">🏠<span>Home</span></a>
-    <a href="#occasions">🎉<span>Occasions</span></a>
+    <a href="#/home" data-route="home" class="active">🏠<span>Home</span></a>
+    <a href="#/occasions" data-route="occasions">🎉<span>Occasions</span></a>
     <button id="bottomBookBtn" class="bn-book">＋<span>Book</span></button>
-    <a href="#venues">🏛️<span>Venues</span></a>
-    <a href="#contact">📞<span>Contact</span></a>
+    <a href="#/venues" data-route="venues">🏛️<span>Venues</span></a>
+    <a href="#/bookings" data-route="bookings">🧾<span>Bookings</span></a>
   </nav>
 
   <!-- ===== Booking Modal ===== -->
@@ -183,12 +253,9 @@
           <span class="dot" data-step="4"></span>
         </div>
       </div>
-      <div class="modal-body" id="bkBody"><!-- steps injected --></div>
-      <div class="modal-foot">
-        <div class="estimate">
-          <span>Estimated</span>
-          <strong id="bkTotal">₹0</strong>
-        </div>
+      <div class="modal-body" id="bkBody"></div>
+      <div class="modal-foot" id="bkFoot">
+        <div class="estimate"><span>Estimated</span><strong id="bkTotal">₹0</strong></div>
         <div class="foot-btns">
           <button class="btn btn-ghost btn-sm" id="bkBack">Back</button>
           <button class="btn btn-gold btn-sm" id="bkNext">Next</button>
@@ -201,6 +268,8 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="js/data.js"></script>
+  <script src="js/pricing.js"></script>
+  <script src="js/store.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

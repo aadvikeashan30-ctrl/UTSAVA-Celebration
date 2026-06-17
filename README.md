@@ -1,62 +1,120 @@
 # UTSAVA Celebration 🎉
 
-A mobile-first event-planning & banquet booking web app for **UTSAVA Celebration**, Bingetown, Bangalore.
+A complete, market-grade **celebration booking application** for **UTSAVA Celebration**,
+Bingetown, Bangalore — private-theatre experiences + banquet/event planning.
 
-> *Where every moment becomes a memory.*
+> *Turning moments into memories.*
+
+Built as a dependency-free, installable **PWA / single-page app** (vanilla HTML/CSS/JS).
+See **[DESIGN.md](DESIGN.md)** for the full high-level design and market analysis.
+
+---
 
 ## ✨ Features
 
-Inspired by leading private-theatre celebration apps (e.g. The Binge Town), tailored to UTSAVA's hall + event-planning business.
+**Discovery**
+- Multi-view SPA: Home · Occasions · Venues · Gallery · My Bookings (hash router)
+- 12 occasions, venue catalog with ratings & amenities, filterable gallery, occasion search
+- Scrolling offers ticker
 
-- **Festive, attractive UI** — Indian celebration theme (maroon · rose · gold) with confetti, scroll reveals and a polished mobile app feel.
-- **12 occasions** — Birthday, Anniversary, Marriage, Bride/Groom-to-be, Baby shower, Naming ceremony, Proposal, Romantic date, Old age party, Send-off, Reunion, Just-for-fun.
-- **Two venues with people-based packages** — Private Theatre (base price + per-extra-guest) and The Grand Hall.
-- **Rich add-ons** — Designer cake, photography, fog entry, cold pyro/sparklers, LED name/number, rose-petal path, candle path, bouquet, sash & crown, premium decoration.
-- **Smart 4-step booking flow** — occasion → venue + guest stepper + add-ons → date/slot + details + coupon → review & pay.
-- **Coupon codes** — FLAT500, UTSAVA10, FIRST100 with live discount on the estimate.
-- **Advance payment breakdown** — 25% advance to confirm + balance at venue.
-- **Time slots from the brief** — 9 AM–4 PM (2 hr) and 4 PM–11 PM (1½ hr), open all 7 days, plus hourly & half-day packages.
-- **Trust elements** — stats banner, "How it works" steps, customer reviews (4.9★) and FAQ.
-- **Services showcase** — Hall, Decoration, Flower & Balloon decoration, Lighting, Sound systems, Catering.
-- **WhatsApp / call / email** quick contact + bookings saved to `localStorage` with a reference number.
+**Booking (4-step wizard)**
+1. Occasion → 2. Venue + guest count + add-ons → 3. Date / slot / details / coupon → 4. Review & pay
+- **People-based pricing**: base package + per-extra-guest charges
+- **10 add-ons** with quantity steppers (cake, photography, fog, pyro, LED, petal/candle path, bouquet, sash, premium decor)
+- **Real-time slot availability** — booked slots are disabled; double-booking is prevented
+- **Coupons** (FLAT500, UTSAVA10, FIRST100) with live discount
+- **Transparent pricing** — subtotal, discount, **GST 18%**, total, **25% advance** + balance
+
+**Post-booking**
+- **My Bookings** / purchase history with status chips, **cancel**, **re-book** and **share**
+- Bookings, favourites and contact profile persisted in `localStorage`
+
+**Trust & capture**
+- Stats banner, "How it works", customer reviews (4.9★), FAQ
+- Quick enquiry form, floating WhatsApp, call & email deep links
+
+**Platform**
+- Installable PWA (manifest + service worker, works offline) — ready for iOS & Android
+- Responsive mobile-first → tablet → desktop, accessible, reduced-motion friendly
+
+---
 
 ## 📁 Project Structure
 
 ```
 UTSAVA-Celebration/
-├── index.html        # App markup & sections
-├── css/
-│   └── styles.css    # Festive mobile-first theme
-└── js/
-    ├── data.js       # All content (services, events, venues, slots…)
-    └── app.js        # Rendering + interactive booking flow
+├── index.html              # App shell + all views
+├── manifest.webmanifest    # PWA metadata (installable)
+├── sw.js                   # Service worker (offline cache)
+├── DESIGN.md               # High-level design & market analysis
+├── icons/icon.svg          # App icon
+├── css/styles.css          # Festive design system (maroon · rose · gold)
+├── js/
+│   ├── data.js             # Catalog/content (UMD: browser + Node)
+│   ├── pricing.js          # Pure pricing/availability logic (unit-tested)
+│   ├── store.js            # localStorage: bookings, favourites, profile
+│   └── app.js              # Router + views + booking wizard
+└── tests/
+    ├── pricing.test.js     # 28 unit tests (no deps)
+    ├── dom-smoke.test.js   # 8 end-to-end smoke tests (DOM stub)
+    └── run.sh              # Test runner
 ```
+
+---
 
 ## 🚀 Run locally
 
-It's a static site with **no build step or dependencies**. Open `index.html` directly, or serve it:
+No build step or dependencies. Serve the folder:
 
 ```bash
-# any static server works
 python3 -m http.server 8080
-# then visit http://localhost:8080
+# open http://localhost:8080
 ```
+
+> A static server (not `file://`) is recommended so the service worker registers.
+
+---
+
+## ✅ Tests
+
+Pure logic and the full booking flow are covered by Node tests using the built-in
+`assert` module (no external packages):
+
+```bash
+bash tests/run.sh
+# == Unit tests ==        28 passed, 0 failed
+# == DOM smoke test ==     8 passed, 0 failed
+```
+
+The smoke test loads `app.js` against a minimal DOM stub and drives the entire
+4-step booking flow + confirmation, the router and slot-availability — verifying
+the app runs without errors and the saved booking matches the pricing engine.
+
+---
+
+## 💰 Pricing model
+
+```
+venueCost  = base + max(0, guests - included) * perExtraGuest
+subtotal   = venueCost + Σ(addOn.price * qty)
+discount   = coupon (flat/percent, min-cart gated, capped)
+gst        = round((subtotal - discount) * 18%)
+total      = (subtotal - discount) + gst
+advance    = round(total * 25%)   ·   balance = total - advance
+```
+
+---
 
 ## 📞 Contact (in-app)
 
-- **Phone:** +91 88840 00556
+- **Phone / WhatsApp:** +91 88840 00556
 - **Email:** utsavcelebration@gmail.com
-- **Location:** Bingetown, Bangalore
-- **Hours:** Open 7 days · 9:00 AM – 11:00 PM
+- **Location:** Bingetown, Bangalore · Open 7 days · 9:00 AM – 11:00 PM
 
-## 📱 Going native (iOS & Android)
+---
 
-This web app is structured as a clean PWA-ready foundation. To ship to the App Store / Play Store, wrap it with [Capacitor](https://capacitorjs.com/):
+## 🗺️ Roadmap (server-ready)
 
-```bash
-npm init @capacitor/app
-npx cap add ios
-npx cap add android
-```
-
-Then copy `index.html`, `css/` and `js/` into the Capacitor `www/` folder.
+- Swap `localStorage` for a backend/API; integrate a payment gateway (Razorpay/Stripe)
+- Admin dashboard (orders, calendar, inventory); SMS/email confirmations
+- Native shells via Capacitor for the App Store & Play Store
