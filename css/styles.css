@@ -457,3 +457,120 @@ img { max-width: 100%; display: block; }
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
   .reveal { opacity: 1; transform: none; }
 }
+
+
+/* ============================================================
+   ADDITIONS — Binge-Town-style features
+   ============================================================ */
+
+/* Venue per-package small text */
+.venue-foot .rate small { font-size: 11px; color: var(--muted); font-weight: 500; }
+
+/* ===== How it works ===== */
+.how-grid { grid-template-columns: repeat(2, 1fr); }
+.how-card {
+  position: relative; text-align: center; padding: 26px 16px 20px;
+  background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+.how-num {
+  position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+  width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--grad-festive); color: #fff; font-weight: 700; font-size: 14px;
+  box-shadow: var(--shadow-sm);
+}
+.how-ic { width: 52px; height: 52px; margin: 6px auto 12px; border-radius: 14px; display: grid; place-items: center; background: linear-gradient(135deg, rgba(214,51,108,.12), rgba(244,183,64,.18)); }
+.how-ic svg { width: 26px; height: 26px; stroke: var(--maroon); }
+.how-card h3 { font-size: 15.5px; }
+.how-card p { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
+
+/* ===== Reviews ===== */
+.reviews-row {
+  display: grid; grid-auto-flow: column; grid-auto-columns: 82%;
+  gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory;
+  padding: 4px 4px 14px; -webkit-overflow-scrolling: touch;
+  max-width: var(--maxw); margin: 0 auto;
+}
+.reviews-row::-webkit-scrollbar { height: 6px; }
+.reviews-row::-webkit-scrollbar-thumb { background: var(--line); border-radius: 999px; }
+.review-card {
+  scroll-snap-align: start;
+  background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 20px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column;
+}
+.review-stars { color: var(--gold-deep); font-size: 16px; letter-spacing: 2px; margin-bottom: 8px; }
+.review-text { font-size: 14px; color: var(--ink); flex: 1; }
+.review-foot { display: flex; align-items: center; gap: 10px; margin-top: 14px; }
+.review-avatar {
+  width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--grad-festive); color: #fff; font-weight: 700;
+}
+.review-foot strong { display: block; font-size: 14px; }
+.review-foot small { color: var(--muted); font-size: 12px; }
+
+/* ===== FAQ ===== */
+.faq-list { max-width: 760px; margin: 0 auto; display: grid; gap: 10px; }
+.faq-item {
+  background: #fff; border: 1px solid var(--line); border-radius: 14px;
+  padding: 4px 18px; box-shadow: var(--shadow-sm);
+}
+.faq-item summary {
+  list-style: none; cursor: pointer; padding: 14px 0; font-weight: 600; font-size: 15px;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-plus { font-size: 22px; color: var(--rose); transition: transform .2s; line-height: 1; }
+.faq-item[open] .faq-plus { transform: rotate(45deg); }
+.faq-item p { font-size: 13.5px; color: var(--muted); padding: 0 0 16px; }
+
+/* ===== Booking: occasion tiles ===== */
+.opt-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.opt-tile {
+  background: #fff; border: 2px solid var(--line); border-radius: 14px;
+  padding: 14px 6px; text-align: center; cursor: pointer; transition: .15s;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.opt-tile:hover { border-color: var(--pink); }
+.opt-tile.selected { border-color: var(--rose); background: rgba(214,51,108,.06); }
+.ot-emoji { font-size: 26px; }
+.ot-name { font-size: 11.5px; font-weight: 600; line-height: 1.2; }
+
+/* add-on inline icon inside option */
+.o-ic svg { width: 22px; height: 22px; stroke: var(--maroon); }
+
+/* ===== Guest stepper ===== */
+.stepper { display: inline-flex; align-items: center; gap: 18px; background: #fff; border: 2px solid var(--line); border-radius: 999px; padding: 6px 10px; }
+.stepper button {
+  width: 38px; height: 38px; border-radius: 50%; border: none; cursor: pointer;
+  background: var(--grad-festive); color: #fff; font-size: 22px; line-height: 1;
+  display: grid; place-items: center;
+}
+.stepper span { font-size: 20px; font-weight: 700; min-width: 28px; text-align: center; }
+
+/* ===== Chip labels ===== */
+.chip-label { width: 100%; font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+/* ===== Coupon ===== */
+.coupon-row { display: flex; gap: 8px; }
+.coupon-row input { flex: 1; }
+.coupon-msg { font-size: 12.5px; margin-top: 6px; min-height: 16px; }
+.coupon-msg.ok { color: #2b8a3e; font-weight: 600; }
+.coupon-msg.err { color: #d6336c; font-weight: 600; }
+.coupon-hints { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.coupon-chip {
+  border: 1px dashed var(--rose); background: rgba(214,51,108,.05); color: var(--rose);
+  font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 8px; cursor: pointer;
+  font-family: inherit; letter-spacing: .5px;
+}
+
+/* ===== Summary extras ===== */
+.summary-row.disc strong { color: #2b8a3e; }
+.summary-row.pay-row { background: rgba(244,183,64,.14); }
+.summary-row.pay-row strong { color: var(--maroon); }
+
+/* ===== Responsive ===== */
+@media (min-width: 720px) {
+  .how-grid { grid-template-columns: repeat(4, 1fr); }
+  .reviews-row { grid-auto-columns: minmax(0, 1fr); grid-auto-flow: row; grid-template-columns: repeat(3, 1fr); overflow: visible; }
+  .opt-grid { grid-template-columns: repeat(4, 1fr); }
+}

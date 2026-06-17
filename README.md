@@ -6,14 +6,19 @@ A mobile-first event-planning & banquet booking web app for **UTSAVA Celebration
 
 ## ✨ Features
 
+Inspired by leading private-theatre celebration apps (e.g. The Binge Town), tailored to UTSAVA's hall + event-planning business.
+
 - **Festive, attractive UI** — Indian celebration theme (maroon · rose · gold) with confetti, scroll reveals and a polished mobile app feel.
+- **12 occasions** — Birthday, Anniversary, Marriage, Bride/Groom-to-be, Baby shower, Naming ceremony, Proposal, Romantic date, Old age party, Send-off, Reunion, Just-for-fun.
+- **Two venues with people-based packages** — Private Theatre (base price + per-extra-guest) and The Grand Hall.
+- **Rich add-ons** — Designer cake, photography, fog entry, cold pyro/sparklers, LED name/number, rose-petal path, candle path, bouquet, sash & crown, premium decoration.
+- **Smart 4-step booking flow** — occasion → venue + guest stepper + add-ons → date/slot + details + coupon → review & pay.
+- **Coupon codes** — FLAT500, UTSAVA10, FIRST100 with live discount on the estimate.
+- **Advance payment breakdown** — 25% advance to confirm + balance at venue.
+- **Time slots from the brief** — 9 AM–4 PM (2 hr) and 4 PM–11 PM (1½ hr), open all 7 days, plus hourly & half-day packages.
+- **Trust elements** — stats banner, "How it works" steps, customer reviews (4.9★) and FAQ.
 - **Services showcase** — Hall, Decoration, Flower & Balloon decoration, Lighting, Sound systems, Catering.
-- **Event types** — Birthday, Marriage, Old age party, Marriage anniversary, Naming ceremony, Send-off.
-- **Two venues** — The Theater (intimate) & The Grand Hall (large banquet).
-- **Add-ons** — Cakes, Photo shooting, Additional decoration.
-- **Smart booking flow** — 4-step booking with live price estimate, date picker, time slots and validation.
-- **Time slots from the brief** — 9 AM–4 PM (2 hr) and 4 PM–11 PM (1½ hr), open all 7 days, plus hourly & half-day packages for the big hall.
-- **Bookings saved locally** — confirmed requests are stored in `localStorage` with a reference number.
+- **WhatsApp / call / email** quick contact + bookings saved to `localStorage` with a reference number.
 
 ## 📁 Project Structure
 

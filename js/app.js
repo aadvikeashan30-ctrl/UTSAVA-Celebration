@@ -1,6 +1,7 @@
 /* ============================================================
    UTSAVA Celebration — App Logic
-   Rendering + interactive multi-step booking flow
+   Rendering + interactive booking flow with people-based
+   packages, add-ons, coupons and advance payment.
    ============================================================ */
 
 /* ---------- Inline SVG icon set (stroke-based) ---------- */
@@ -23,11 +24,17 @@ const ICONS = {
 
 const $  = (s, p = document) => p.querySelector(s);
 const $$ = (s, p = document) => [...p.querySelectorAll(s)];
-const rupee = (n) => "₹" + Number(n).toLocaleString("en-IN");
+const rupee = (n) => "₹" + Number(Math.round(n)).toLocaleString("en-IN");
+const stars = (n) => "★".repeat(n) + "☆".repeat(5 - n);
 
 /* ============================================================
    RENDER STATIC SECTIONS
    ============================================================ */
+function renderStats() {
+  $("#heroStats").innerHTML = UTSAVA.stats.map(s =>
+    `<div><strong>${s.value}</strong><span>${s.label}</span></div>`).join("");
+}
+
 function renderServices() {
   $("#servicesGrid").innerHTML = UTSAVA.services.map(s => `
     <div class="service-card reveal">
@@ -43,15 +50,22 @@ function renderEvents() {
       <div class="event-emoji">${e.emoji}</div>
       <h3>${e.name}</h3>
       <p>${e.blurb}</p>
-      <div class="event-foot">
-        <span class="from">from <b>${rupee(e.base)}</b></span>
-        <span class="mini-book">Book →</span>
-      </div>
+      <span class="mini-book">Book →</span>
     </div>`).join("");
 
   $$(".event-card").forEach(card =>
     card.addEventListener("click", () => openBooking(card.dataset.event))
   );
+}
+
+function renderHow() {
+  $("#howGrid").innerHTML = UTSAVA.howItWorks.map((h, i) => `
+    <div class="how-card reveal">
+      <div class="how-num">${i + 1}</div>
+      <div class="how-ic">${ICONS[h.icon] || ""}</div>
+      <h3>${h.title}</h3>
+      <p>${h.text}</p>
+    </div>`).join("");
 }
 
 function renderVenues() {
@@ -64,8 +78,8 @@ function renderVenues() {
         <p>${v.desc}</p>
         <div class="venue-tags">${v.tags.map(t => `<span class="tag">${t}</span>`).join("")}</div>
         <div class="venue-foot">
-          <span class="rate">from <b>${rupee(v.perHour)}</b>/hr</span>
-          <button class="btn btn-ghost dark btn-sm" data-venue="${v.id}">Select</button>
+          <span class="rate">from <b>${rupee(v.basePackage)}</b><small> /${v.includesPeople} ppl</small></span>
+          <button class="btn btn-ghost dark btn-sm" data-venue="${v.id}">Book</button>
         </div>
       </div>
     </div>`).join("");
@@ -102,6 +116,20 @@ function renderPackages() {
     </div>`).join("");
 }
 
+function renderReviews() {
+  const avg = (UTSAVA.reviews.reduce((s, r) => s + r.rating, 0) / UTSAVA.reviews.length).toFixed(1);
+  $("#reviewsSummary").textContent = `Rated ${avg} / 5 across thousands of celebrations.`;
+  $("#reviewsRow").innerHTML = UTSAVA.reviews.map(r => `
+    <div class="review-card reveal">
+      <div class="review-stars">${stars(r.rating)}</div>
+      <p class="review-text">“${r.text}”</p>
+      <div class="review-foot">
+        <span class="review-avatar">${r.name.charAt(0)}</span>
+        <div><strong>${r.name}</strong><small>${r.tag}</small></div>
+      </div>
+    </div>`).join("");
+}
+
 function renderWhy() {
   $("#whyGrid").innerHTML = UTSAVA.highlights.map(h => `
     <div class="why-card reveal">
@@ -111,12 +139,24 @@ function renderWhy() {
     </div>`).join("");
 }
 
+function renderFaq() {
+  $("#faqList").innerHTML = UTSAVA.faq.map(f => `
+    <details class="faq-item reveal">
+      <summary>${f.q}<span class="faq-plus">+</span></summary>
+      <p>${f.a}</p>
+    </details>`).join("");
+}
+
 function renderContact() {
   const b = UTSAVA.brand;
   $("#contactCards").innerHTML = `
     <a class="contact-card" href="tel:${b.phone}">
       <span class="cc-ic">📞</span>
       <div><div class="lbl">Call us</div><div class="val">${b.phoneDisplay}</div></div>
+    </a>
+    <a class="contact-card" href="https://wa.me/${b.whatsapp}" target="_blank" rel="noopener">
+      <span class="cc-ic">💬</span>
+      <div><div class="lbl">WhatsApp</div><div class="val">${b.phoneDisplay}</div></div>
     </a>
     <a class="contact-card" href="mailto:${b.email}">
       <span class="cc-ic">✉️</span>
@@ -135,10 +175,11 @@ const booking = {
   step: 1,
   eventId: null,
   venueId: null,
-  packageId: null,
+  guests: 0,
   date: "",
   slot: "",
   addOns: new Set(),
+  coupon: null,        // {code, discount}
   name: "",
   phone: "",
 };
@@ -146,16 +187,16 @@ const booking = {
 const modal = $("#bookingModal");
 
 function openBooking(eventId = null, venueId = null) {
-  booking.step = 1;
-  booking.eventId = eventId;
-  booking.venueId = venueId;
-  booking.packageId = null;
-  booking.date = "";
-  booking.slot = "";
-  booking.addOns = new Set();
+  Object.assign(booking, {
+    step: 1, eventId, venueId, guests: 0, date: "", slot: "",
+    addOns: new Set(), coupon: null, name: booking.name, phone: booking.phone,
+  });
+  const v = UTSAVA.venues.find(x => x.id === venueId);
+  booking.guests = v ? v.includesPeople : 0;
   modal.classList.add("open");
   modal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
+  if ($("#bkSteps")) $("#bkSteps").style.visibility = "visible";
   renderStep();
 }
 
@@ -165,74 +206,103 @@ function closeBooking() {
   document.body.style.overflow = "";
 }
 
-function calcTotal() {
-  let total = 0;
-  const ev = UTSAVA.events.find(e => e.id === booking.eventId);
-  const vn = UTSAVA.venues.find(v => v.id === booking.venueId);
-  if (ev) total += ev.base;
-  if (vn) total += vn.perHour * 2; // assume a 2-hour base block
-  booking.addOns.forEach(id => {
-    const a = UTSAVA.addOns.find(x => x.id === id);
-    if (a) total += a.price;
-  });
-  return total;
+/* ---- pricing ---- */
+function venueCost() {
+  const v = UTSAVA.venues.find(x => x.id === booking.venueId);
+  if (!v) return 0;
+  const extra = Math.max(0, booking.guests - v.includesPeople);
+  return v.basePackage + extra * v.extraPerPerson;
+}
+function addOnsCost() {
+  let t = 0;
+  booking.addOns.forEach(id => { const a = UTSAVA.addOns.find(x => x.id === id); if (a) t += a.price; });
+  return t;
+}
+function subtotal() { return venueCost() + addOnsCost(); }
+function discountAmount() {
+  if (!booking.coupon) return 0;
+  const c = UTSAVA.coupons.find(x => x.code === booking.coupon);
+  if (!c) return 0;
+  const sub = subtotal();
+  if (sub < c.min) return 0;
+  return c.type === "flat" ? Math.min(c.value, sub) : Math.round(sub * c.value / 100);
+}
+function grandTotal() { return Math.max(0, subtotal() - discountAmount()); }
+function advanceAmount() { return Math.round(grandTotal() * UTSAVA.advancePercent / 100); }
+
+function updateTotal() { $("#bkTotal").textContent = rupee(grandTotal()); }
+
+function applyCoupon(codeRaw) {
+  const code = (codeRaw || "").trim().toUpperCase();
+  const msg = $("#couponMsg");
+  if (!code) { booking.coupon = null; if (msg) msg.textContent = ""; updateTotal(); return; }
+  const c = UTSAVA.coupons.find(x => x.code === code);
+  if (!c) { booking.coupon = null; if (msg) { msg.textContent = "Invalid coupon code"; msg.className = "coupon-msg err"; } }
+  else if (subtotal() < c.min) { booking.coupon = null; if (msg) { msg.textContent = `Add ${rupee(c.min)}+ to use ${code}`; msg.className = "coupon-msg err"; } }
+  else { booking.coupon = code; if (msg) { msg.textContent = `🎉 ${code} applied — you saved ${rupee(discountAmount())}`; msg.className = "coupon-msg ok"; } }
+  updateTotal();
 }
 
-function updateTotal() { $("#bkTotal").textContent = rupee(calcTotal()); }
-
 function renderStep() {
-  // step dots
-  $$("#bkSteps .dot").forEach(d =>
-    d.classList.toggle("active", Number(d.dataset.step) <= booking.step)
-  );
-
+  $$("#bkSteps .dot").forEach(d => d.classList.toggle("active", Number(d.dataset.step) <= booking.step));
   const body = $("#bkBody");
   const back = $("#bkBack");
   const next = $("#bkNext");
   back.style.visibility = booking.step === 1 ? "hidden" : "visible";
 
+  /* ---- Step 1: occasion ---- */
   if (booking.step === 1) {
     next.textContent = "Next";
     body.innerHTML = `
       <div class="bk-step">
         <h4>What are we celebrating?</h4>
         <p class="hint">Choose your occasion.</p>
-        <div class="opt-list">
+        <div class="opt-grid">
           ${UTSAVA.events.map(e => `
-            <div class="opt ${booking.eventId === e.id ? "selected" : ""}" data-pick="event" data-id="${e.id}">
-              <span class="o-emoji">${e.emoji}</span>
-              <div class="o-main">
-                <div class="o-title">${e.name}</div>
-                <div class="o-sub">${e.blurb}</div>
-              </div>
-              <span class="o-price">${rupee(e.base)}</span>
+            <div class="opt-tile ${booking.eventId === e.id ? "selected" : ""}" data-pick="event" data-id="${e.id}">
+              <span class="ot-emoji">${e.emoji}</span>
+              <span class="ot-name">${e.name}</span>
             </div>`).join("")}
         </div>
       </div>`;
   }
 
+  /* ---- Step 2: venue + guests + add-ons ---- */
   else if (booking.step === 2) {
     next.textContent = "Next";
+    const v = UTSAVA.venues.find(x => x.id === booking.venueId);
     body.innerHTML = `
       <div class="bk-step">
         <h4>Pick a venue</h4>
         <p class="hint">Where would you like to celebrate?</p>
         <div class="opt-list">
-          ${UTSAVA.venues.map(v => `
-            <div class="opt ${booking.venueId === v.id ? "selected" : ""}" data-pick="venue" data-id="${v.id}">
-              <span class="o-emoji">${v.id === "hall" ? "🏛️" : "🎭"}</span>
+          ${UTSAVA.venues.map(vn => `
+            <div class="opt ${booking.venueId === vn.id ? "selected" : ""}" data-pick="venue" data-id="${vn.id}">
+              <span class="o-emoji">${vn.id === "hall" ? "🏛️" : "🎭"}</span>
               <div class="o-main">
-                <div class="o-title">${v.name}</div>
-                <div class="o-sub">${v.capacity} · ${v.size}</div>
+                <div class="o-title">${vn.name}</div>
+                <div class="o-sub">${vn.capacity} · ${vn.decorationIncluded ? "decor included" : "decor add-on"}</div>
               </div>
-              <span class="o-price">${rupee(v.perHour)}/hr</span>
+              <span class="o-price">${rupee(vn.basePackage)}<small>/${vn.includesPeople}</small></span>
             </div>`).join("")}
         </div>
+
+        <div id="guestWrap" style="${v ? "" : "display:none"}">
+          <h4 style="margin-top:20px">Number of guests</h4>
+          <p class="hint">${v ? `${v.includesPeople} included, then ${rupee(v.extraPerPerson)}/extra guest (max ${v.maxPeople}).` : ""}</p>
+          <div class="stepper">
+            <button type="button" id="gMinus">−</button>
+            <span id="gCount">${booking.guests}</span>
+            <button type="button" id="gPlus">+</button>
+          </div>
+        </div>
+
         <h4 style="margin-top:20px">Add-ons (optional)</h4>
         <p class="hint">Make it extra special.</p>
         <div class="opt-list">
           ${UTSAVA.addOns.map(a => `
             <div class="opt ${booking.addOns.has(a.id) ? "selected" : ""}" data-pick="addon" data-id="${a.id}">
+              <span class="o-emoji">${ICONS[a.icon] ? `<span class="o-ic">${ICONS[a.icon]}</span>` : ""}</span>
               <div class="o-main">
                 <div class="o-title">${a.name}</div>
                 <div class="o-sub">${a.desc}</div>
@@ -242,12 +312,13 @@ function renderStep() {
             </div>`).join("")}
         </div>
       </div>`;
+    wireGuestStepper();
   }
 
+  /* ---- Step 3: date / slot / details ---- */
   else if (booking.step === 3) {
     next.textContent = "Review";
     const today = new Date().toISOString().split("T")[0];
-    const allSlots = [...UTSAVA.slots.morning, ...UTSAVA.slots.evening];
     body.innerHTML = `
       <div class="bk-step">
         <h4>Date & time</h4>
@@ -259,10 +330,10 @@ function renderStep() {
         <div class="field">
           <label>Choose a slot</label>
           <div class="chip-row">
-            <strong style="width:100%;font-size:12px;color:var(--muted)">Morning (2 hr)</strong>
-            ${UTSAVA.slots.morning.map(s => `<button class="chip ${booking.slot === s ? "selected" : ""}" data-slot="${s}">${s}</button>`).join("")}
-            <strong style="width:100%;font-size:12px;color:var(--muted);margin-top:6px">Evening (1½ hr)</strong>
-            ${UTSAVA.slots.evening.map(s => `<button class="chip ${booking.slot === s ? "selected" : ""}" data-slot="${s}">${s}</button>`).join("")}
+            <strong class="chip-label">Morning · 2 hr</strong>
+            ${UTSAVA.slots.morning.map(s => `<button type="button" class="chip ${booking.slot === s ? "selected" : ""}" data-slot="${s}">${s}</button>`).join("")}
+            <strong class="chip-label">Evening · 1½ hr</strong>
+            ${UTSAVA.slots.evening.map(s => `<button type="button" class="chip ${booking.slot === s ? "selected" : ""}" data-slot="${s}">${s}</button>`).join("")}
           </div>
         </div>
         <div class="field">
@@ -273,6 +344,15 @@ function renderStep() {
           <label>Phone number</label>
           <input type="tel" id="bkPhone" placeholder="10-digit mobile" value="${booking.phone}">
         </div>
+        <div class="field">
+          <label>Coupon code</label>
+          <div class="coupon-row">
+            <input type="text" id="bkCoupon" placeholder="e.g. FLAT500" value="${booking.coupon || ""}">
+            <button type="button" class="btn btn-ghost dark btn-sm" id="bkApply">Apply</button>
+          </div>
+          <div class="coupon-msg ${booking.coupon ? "ok" : ""}" id="couponMsg">${booking.coupon ? `🎉 ${booking.coupon} applied` : ""}</div>
+          <div class="coupon-hints">${UTSAVA.coupons.map(c => `<button type="button" class="coupon-chip" data-coupon="${c.code}">${c.code}</button>`).join("")}</div>
+        </div>
       </div>`;
 
     $("#bkDate").addEventListener("change", e => booking.date = e.target.value);
@@ -282,13 +362,17 @@ function renderStep() {
       booking.slot = c.dataset.slot;
       $$("[data-slot]").forEach(x => x.classList.toggle("selected", x.dataset.slot === booking.slot));
     }));
+    $("#bkApply").addEventListener("click", () => applyCoupon($("#bkCoupon").value));
+    $$("[data-coupon]").forEach(b => b.addEventListener("click", () => { $("#bkCoupon").value = b.dataset.coupon; applyCoupon(b.dataset.coupon); }));
   }
 
+  /* ---- Step 4: review + payment ---- */
   else if (booking.step === 4) {
     next.textContent = "Confirm 🎉";
     const ev = UTSAVA.events.find(e => e.id === booking.eventId);
     const vn = UTSAVA.venues.find(v => v.id === booking.venueId);
     const addList = [...booking.addOns].map(id => UTSAVA.addOns.find(a => a.id === id));
+    const disc = discountAmount();
     body.innerHTML = `
       <div class="bk-step">
         <h4>Review your booking</h4>
@@ -296,30 +380,42 @@ function renderStep() {
         <div class="summary">
           <div class="summary-row"><span>Occasion</span><strong>${ev ? ev.emoji + " " + ev.name : "—"}</strong></div>
           <div class="summary-row"><span>Venue</span><strong>${vn ? vn.name : "—"}</strong></div>
+          <div class="summary-row"><span>Guests</span><strong>${booking.guests || "—"}</strong></div>
           <div class="summary-row"><span>Date</span><strong>${booking.date || "—"}</strong></div>
           <div class="summary-row"><span>Slot</span><strong>${booking.slot || "—"}</strong></div>
           <div class="summary-row"><span>Add-ons</span><strong>${addList.length ? addList.map(a => a.name).join(", ") : "None"}</strong></div>
-          <div class="summary-row"><span>Name</span><strong>${booking.name || "—"}</strong></div>
-          <div class="summary-row"><span>Phone</span><strong>${booking.phone || "—"}</strong></div>
-          <div class="summary-row summary-total"><span>Estimated total</span><strong>${rupee(calcTotal())}</strong></div>
+        </div>
+        <div class="summary" style="margin-top:14px">
+          <div class="summary-row"><span>Venue package</span><strong>${rupee(venueCost())}</strong></div>
+          <div class="summary-row"><span>Add-ons</span><strong>${rupee(addOnsCost())}</strong></div>
+          ${disc ? `<div class="summary-row disc"><span>Coupon ${booking.coupon}</span><strong>− ${rupee(disc)}</strong></div>` : ""}
+          <div class="summary-row summary-total"><span>Total</span><strong>${rupee(grandTotal())}</strong></div>
+          <div class="summary-row pay-row"><span>Pay now (advance ${UTSAVA.advancePercent}%)</span><strong>${rupee(advanceAmount())}</strong></div>
+          <div class="summary-row"><span>Balance at venue</span><strong>${rupee(grandTotal() - advanceAmount())}</strong></div>
         </div>
         <p class="hint" style="margin-top:14px">This is an estimate. Our team will call you on ${UTSAVA.brand.phoneDisplay} to finalise.</p>
       </div>`;
   }
 
-  // wire option pickers
+  // wire option pickers (event / venue / addon tiles)
   $$("[data-pick]").forEach(opt => opt.addEventListener("click", () => {
     const { pick, id } = opt.dataset;
-    if (pick === "event") booking.eventId = id;
-    if (pick === "venue") booking.venueId = id;
+    if (pick === "event") {
+      booking.eventId = id;
+      $$('[data-pick="event"]').forEach(o => o.classList.toggle("selected", o.dataset.id === id));
+    }
+    if (pick === "venue") {
+      booking.venueId = id;
+      const v = UTSAVA.venues.find(x => x.id === id);
+      booking.guests = v ? v.includesPeople : 0;
+      $$('[data-pick="venue"]').forEach(o => o.classList.toggle("selected", o.dataset.id === id));
+      const gw = $("#guestWrap");
+      if (gw) { gw.style.display = ""; $("#gCount").textContent = booking.guests;
+        gw.querySelector(".hint").textContent = `${v.includesPeople} included, then ${rupee(v.extraPerPerson)}/extra guest (max ${v.maxPeople}).`; }
+    }
     if (pick === "addon") {
       booking.addOns.has(id) ? booking.addOns.delete(id) : booking.addOns.add(id);
-    }
-    // refresh selected states within same group
-    if (pick === "addon") {
       opt.classList.toggle("selected");
-    } else {
-      $$(`[data-pick="${pick}"]`).forEach(o => o.classList.toggle("selected", o.dataset.id === id));
     }
     updateTotal();
   }));
@@ -327,10 +423,28 @@ function renderStep() {
   updateTotal();
 }
 
+function wireGuestStepper() {
+  const minus = $("#gMinus"), plus = $("#gPlus"), count = $("#gCount");
+  if (!minus) return;
+  const v = () => UTSAVA.venues.find(x => x.id === booking.venueId);
+  minus.addEventListener("click", () => {
+    const vn = v(); if (!vn) return;
+    booking.guests = Math.max(1, booking.guests - 1);
+    count.textContent = booking.guests; updateTotal();
+  });
+  plus.addEventListener("click", () => {
+    const vn = v(); if (!vn) return;
+    booking.guests = Math.min(vn.maxPeople, booking.guests + 1);
+    count.textContent = booking.guests; updateTotal();
+  });
+}
+
 function nextStep() {
-  // validation per step
   if (booking.step === 1 && !booking.eventId) return toast("Please select an occasion");
-  if (booking.step === 2 && !booking.venueId) return toast("Please pick a venue");
+  if (booking.step === 2) {
+    if (!booking.venueId) return toast("Please pick a venue");
+    if (booking.guests < 1) return toast("Please set number of guests");
+  }
   if (booking.step === 3) {
     if (!booking.date) return toast("Please choose a date");
     if (!booking.slot) return toast("Please choose a slot");
@@ -342,22 +456,15 @@ function nextStep() {
   renderStep();
 }
 
-function prevStep() {
-  if (booking.step > 1) { booking.step--; renderStep(); }
-}
+function prevStep() { if (booking.step > 1) { booking.step--; renderStep(); } }
 
 function confirmBooking() {
   const record = {
     ref: "UTS" + Date.now().toString().slice(-6),
-    event: booking.eventId,
-    venue: booking.venueId,
-    date: booking.date,
-    slot: booking.slot,
-    addOns: [...booking.addOns],
-    name: booking.name,
-    phone: booking.phone,
-    total: calcTotal(),
-    createdAt: new Date().toISOString(),
+    event: booking.eventId, venue: booking.venueId, guests: booking.guests,
+    date: booking.date, slot: booking.slot, addOns: [...booking.addOns],
+    coupon: booking.coupon, total: grandTotal(), advance: advanceAmount(),
+    name: booking.name, phone: booking.phone, createdAt: new Date().toISOString(),
   };
   try {
     const all = JSON.parse(localStorage.getItem("utsava_bookings") || "[]");
@@ -370,7 +477,7 @@ function confirmBooking() {
       <div class="big">🎉</div>
       <h4>Booking requested!</h4>
       <p>Reference <strong>#${record.ref}</strong></p>
-      <p>Thank you, ${record.name.split(" ")[0] || "there"}! Our team will call you shortly to confirm.</p>
+      <p>Pay advance <strong>${rupee(record.advance)}</strong> to confirm. Thank you, ${record.name.split(" ")[0] || "there"}! Our team will call you shortly.</p>
     </div>`;
   $("#bkSteps").style.visibility = "hidden";
   $(".modal-foot").innerHTML = `<button class="btn btn-gold btn-lg" style="width:100%" id="bkDone">Done</button>`;
@@ -443,17 +550,20 @@ function initAppbar() {
    INIT
    ============================================================ */
 function init() {
+  renderStats();
   renderServices();
   renderEvents();
+  renderHow();
   renderVenues();
   renderAddons();
   renderGallery();
   renderPackages();
+  renderReviews();
   renderWhy();
+  renderFaq();
   renderContact();
   $("#year").textContent = new Date().getFullYear();
 
-  // booking triggers
   ["navBookBtn", "heroBookBtn", "bottomBookBtn", "contactBookBtn"].forEach(id => {
     const el = $("#" + id);
     if (el) el.addEventListener("click", () => openBooking());
