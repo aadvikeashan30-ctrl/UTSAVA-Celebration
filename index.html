@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#7a1136" />
+  <meta name="description" content="UTSAVA Celebration — Event planning & banquet booking in Bingetown, Bangalore. Birthdays, weddings, anniversaries, naming ceremonies & more." />
+  <title>UTSAVA Celebration · Event Planning, Bangalore</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ===== Top App Bar ===== -->
+  <header class="appbar" id="appbar">
+    <a href="#home" class="brand" aria-label="UTSAVA Celebration home">
+      <span class="brand-mark">U</span>
+      <span class="brand-text">
+        <strong>UTSAVA</strong>
+        <em>Celebration</em>
+      </span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#services">Services</a>
+      <a href="#events">Events</a>
+      <a href="#venues">Venues</a>
+      <a href="#timing">Timing</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <button class="btn btn-gold btn-sm" id="navBookBtn">Book Now</button>
+  </header>
+
+  <!-- ===== Hero ===== -->
+  <section class="hero" id="home">
+    <div class="hero-glow"></div>
+    <div class="hero-content">
+      <span class="pill">📍 Bingetown, Bangalore · Open 7 Days</span>
+      <h1>Make Every<br><span class="grad-text">Celebration</span><br>Unforgettable</h1>
+      <p class="hero-sub">From dreamy weddings to joyful birthdays — UTSAVA handles décor, catering, lighting & more under one roof.</p>
+      <div class="hero-cta">
+        <button class="btn btn-gold" id="heroBookBtn">Plan My Event</button>
+        <a class="btn btn-ghost" href="#events">Explore Events</a>
+      </div>
+      <div class="hero-stats">
+        <div><strong>6+</strong><span>Event Types</span></div>
+        <div><strong>2</strong><span>Venues</span></div>
+        <div><strong>7 Days</strong><span>Open Weekly</span></div>
+      </div>
+    </div>
+    <div class="hero-confetti" aria-hidden="true"></div>
+  </section>
+
+  <!-- ===== Services ===== -->
+  <section class="section" id="services">
+    <div class="section-head">
+      <span class="kicker">What we offer</span>
+      <h2>Everything for your big day</h2>
+      <p>One team, every detail — so you can simply enjoy the moment.</p>
+    </div>
+    <div class="grid services-grid" id="servicesGrid"></div>
+  </section>
+
+  <!-- ===== Events ===== -->
+  <section class="section section-tint" id="events">
+    <div class="section-head">
+      <span class="kicker">Occasions</span>
+      <h2>Events we plan</h2>
+      <p>Pick an occasion to start planning instantly.</p>
+    </div>
+    <div class="grid events-grid" id="eventsGrid"></div>
+  </section>
+
+  <!-- ===== Venues ===== -->
+  <section class="section" id="venues">
+    <div class="section-head">
+      <span class="kicker">Our spaces</span>
+      <h2>Choose your venue</h2>
+      <p>Two beautiful spaces for gatherings big and small.</p>
+    </div>
+    <div class="grid venues-grid" id="venuesGrid"></div>
+  </section>
+
+  <!-- ===== Add-ons ===== -->
+  <section class="section section-tint" id="addons">
+    <div class="section-head">
+      <span class="kicker">Make it special</span>
+      <h2>Popular add-ons</h2>
+      <p>Optional extras to elevate your celebration.</p>
+    </div>
+    <div class="grid addons-grid" id="addonsGrid"></div>
+  </section>
+
+  <!-- ===== Gallery ===== -->
+  <section class="section" id="gallery">
+    <div class="section-head">
+      <span class="kicker">Inspiration</span>
+      <h2>A glimpse of our work</h2>
+      <p>Themes our team brings to life.</p>
+    </div>
+    <div class="gallery" id="galleryGrid"></div>
+  </section>
+
+  <!-- ===== Timing / Packages ===== -->
+  <section class="section section-tint" id="timing">
+    <div class="section-head">
+      <span class="kicker">Slots & packages</span>
+      <h2>Timings that fit you</h2>
+      <p>Open 9 AM to 11 PM, all 7 days of the week.</p>
+    </div>
+    <div class="grid packages-grid" id="packagesGrid"></div>
+  </section>
+
+  <!-- ===== Why us ===== -->
+  <section class="section" id="why">
+    <div class="grid why-grid" id="whyGrid"></div>
+  </section>
+
+  <!-- ===== Contact ===== -->
+  <section class="section section-dark" id="contact">
+    <div class="section-head">
+      <span class="kicker light">Get in touch</span>
+      <h2>Let's plan together</h2>
+      <p>Call, email or book online — we reply quickly.</p>
+    </div>
+    <div class="contact-cards" id="contactCards"></div>
+    <button class="btn btn-gold btn-lg" id="contactBookBtn">Start Booking</button>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="brand">
+      <span class="brand-mark">U</span>
+      <span class="brand-text"><strong>UTSAVA</strong><em>Celebration</em></span>
+    </div>
+    <p>Where every moment becomes a memory.</p>
+    <small>© <span id="year"></span> UTSAVA Celebration · Bingetown, Bangalore</small>
+  </footer>
+
+  <!-- ===== Bottom Nav (mobile) ===== -->
+  <nav class="bottom-nav" aria-label="Mobile">
+    <a href="#home" class="active">🏠<span>Home</span></a>
+    <a href="#events">🎉<span>Events</span></a>
+    <button id="bottomBookBtn" class="bn-book">＋<span>Book</span></button>
+    <a href="#venues">🏛️<span>Venues</span></a>
+    <a href="#contact">📞<span>Contact</span></a>
+  </nav>
+
+  <!-- ===== Booking Modal ===== -->
+  <div class="modal" id="bookingModal" aria-hidden="true">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="bkTitle">
+      <button class="modal-close" data-close aria-label="Close">✕</button>
+      <div class="modal-head">
+        <h3 id="bkTitle">Book your celebration</h3>
+        <div class="steps" id="bkSteps">
+          <span class="dot active" data-step="1"></span>
+          <span class="dot" data-step="2"></span>
+          <span class="dot" data-step="3"></span>
+          <span class="dot" data-step="4"></span>
+        </div>
+      </div>
+      <div class="modal-body" id="bkBody"><!-- steps injected --></div>
+      <div class="modal-foot">
+        <div class="estimate">
+          <span>Estimated</span>
+          <strong id="bkTotal">₹0</strong>
+        </div>
+        <div class="foot-btns">
+          <button class="btn btn-ghost btn-sm" id="bkBack">Back</button>
+          <button class="btn btn-gold btn-sm" id="bkNext">Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Toast ===== -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
