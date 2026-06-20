@@ -16,9 +16,9 @@
 
   <!-- ===== Top App Bar ===== -->
   <header class="appbar" id="appbar">
-    <a href="#/home" class="brand" aria-label="UTSAVA Celebration home">
-      <span class="brand-mark">U</span>
-      <span class="brand-text"><strong>UTSAVA</strong><em>Celebration</em></span>
+    <a href="#/home" class="brand" aria-label="Utsava Celebrations home">
+      <img class="brand-mark-img" src="icons/logo.svg" alt="Utsava Celebrations" width="44" height="44" />
+      <span class="brand-text"><strong>UTSAVA</strong><em>Celebrations</em></span>
     </a>
     <nav class="nav-links" aria-label="Primary">
       <a href="#/home" data-route="home">Home</a>
@@ -26,6 +26,7 @@
       <a href="#/venues" data-route="venues">Venues</a>
       <a href="#/gallery" data-route="gallery">Gallery</a>
       <a href="#/bookings" data-route="bookings">My Bookings</a>
+      <a href="#/admin" data-route="admin">Admin</a>
     </nav>
     <button class="btn btn-gold btn-sm" id="navBookBtn">Book Now</button>
   </header>
@@ -40,6 +41,7 @@
     <section class="hero" id="home">
       <div class="hero-glow"></div>
       <div class="hero-content">
+        <img class="hero-logo" src="icons/logo.svg" alt="Utsava Celebrations" width="132" height="132" />
         <span class="pill">📍 Bingetown, Bangalore · 4.9★ · Open 7 Days</span>
         <h1>Celebrate in a<br><span class="grad-text">Private Theatre</span><br>& Grand Hall</h1>
         <p class="hero-sub">Surprise birthdays, romantic dates, anniversaries, weddings & more — décor, cake, photography & effects, all bookable online.</p>
@@ -59,6 +61,40 @@
         <p>Tap an occasion to start booking instantly.</p>
       </div>
       <div class="grid events-grid" id="eventsGridHome"></div>
+    </section>
+
+    <section class="section section-tint" id="aiReco">
+      <div class="section-head">
+        <span class="kicker">✨ AI Concierge</span>
+        <h2>Find your perfect package</h2>
+        <p>Tell us the occasion, headcount &amp; budget — we'll design a celebration that fits.</p>
+      </div>
+      <div class="reco-wrap">
+        <form class="reco-form" id="recoForm" novalidate>
+          <div class="reco-field">
+            <label for="recoOcc">Occasion</label>
+            <select id="recoOcc"></select>
+          </div>
+          <div class="reco-field">
+            <label for="recoGuests">Guests</label>
+            <input type="number" id="recoGuests" min="1" max="350" value="8" />
+          </div>
+          <div class="reco-field">
+            <label for="recoBudget">Budget (₹)</label>
+            <input type="number" id="recoBudget" min="0" step="500" value="10000" />
+          </div>
+          <div class="reco-field">
+            <label for="recoVibe">Vibe</label>
+            <select id="recoVibe">
+              <option value="cozy">Cozy &amp; intimate</option>
+              <option value="balanced" selected>Balanced</option>
+              <option value="grand">Grand &amp; lavish</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-gold">Recommend my package</button>
+        </form>
+        <div class="reco-result" id="recoResult" hidden></div>
+      </div>
     </section>
 
     <section class="section section-tint">
@@ -105,6 +141,15 @@
       </div>
       <div class="gallery" id="galleryGridHome"></div>
       <div class="center-cta"><a class="btn btn-ghost dark" href="#/gallery">View full gallery</a></div>
+    </section>
+
+    <section class="section" id="videoSection">
+      <div class="section-head">
+        <span class="kicker">▶ Watch</span>
+        <h2>Video gallery &amp; venue tours</h2>
+        <p>Real celebrations &amp; 360° walkthroughs of our spaces.</p>
+      </div>
+      <div class="grid video-grid" id="videoGrid"></div>
     </section>
 
     <section class="section">
@@ -213,16 +258,25 @@
     </section>
   </main>
 
+  <!-- ============================================================
+       VIEW: ADMIN DASHBOARD
+       ============================================================ -->
+  <main class="view" id="view-admin" hidden>
+    <section class="section view-top">
+      <div id="adminRoot"></div>
+    </section>
+  </main>
+
   <!-- ===== Footer ===== -->
   <footer class="footer">
     <div class="brand">
-      <span class="brand-mark">U</span>
-      <span class="brand-text"><strong>UTSAVA</strong><em>Celebration</em></span>
+      <img class="brand-mark-img" src="icons/logo.svg" alt="Utsava Celebrations" width="56" height="56" />
+      <span class="brand-text"><strong>UTSAVA</strong><em>Celebrations</em></span>
     </div>
     <p>Turning moments into memories.</p>
     <nav class="footer-links">
       <a href="#/home">Home</a><a href="#/occasions">Occasions</a><a href="#/venues">Venues</a>
-      <a href="#/gallery">Gallery</a><a href="#/bookings">My Bookings</a>
+      <a href="#/gallery">Gallery</a><a href="#/bookings">My Bookings</a><a href="#/admin">Admin</a>
     </nav>
     <small>© <span id="year"></span> UTSAVA Celebration · Bingetown, Bangalore</small>
   </footer>
@@ -267,9 +321,21 @@
   <!-- ===== Toast ===== -->
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <!-- ===== Feature Modal (invitation / tracker / recommendation) ===== -->
+  <div class="modal" id="featureModal" aria-hidden="true">
+    <div class="modal-backdrop" data-fclose></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="ftTitle">
+      <button class="modal-close" data-fclose aria-label="Close">✕</button>
+      <div class="modal-head"><h3 id="ftTitle">Details</h3></div>
+      <div class="modal-body" id="ftBody"></div>
+    </div>
+  </div>
+
   <script src="js/data.js"></script>
   <script src="js/pricing.js"></script>
   <script src="js/store.js"></script>
+  <script src="js/features.js"></script>
+  <script src="js/admin.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

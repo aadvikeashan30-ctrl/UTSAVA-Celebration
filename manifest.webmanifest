@@ -1,21 +1,27 @@
 {
-  "name": "UTSAVA Celebration",
+  "name": "UTSAVA Celebrations",
   "short_name": "UTSAVA",
-  "description": "Book a private theatre or banquet hall in Bingetown, Bangalore for birthdays, anniversaries, weddings & more.",
+  "description": "Premium celebration booking platform — private theatre & banquet hall in Bingetown, Bangalore. Birthdays, weddings, anniversaries & more with decor, catering, AI packages & online payments.",
   "start_url": "./index.html#/home",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#fff7ef",
-  "theme_color": "#7a1136",
+  "background_color": "#0c3f25",
+  "theme_color": "#14633a",
   "categories": ["events", "lifestyle", "entertainment"],
   "lang": "en-IN",
   "icons": [
     {
+      "src": "icons/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
       "src": "icons/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     }
   ]
 }

@@ -254,6 +254,9 @@
       const vn = venueById(b.venue);
       const addNames = (b.addOns || []).map((a) => { const ad = addOnById(a.id); return ad ? ad.name + (a.qty > 1 ? ` ×${a.qty}` : "") : ""; }).filter(Boolean);
       const canCancel = b.status === "requested" || b.status === "confirmed";
+      const paid = b.payment && b.payment.paid;
+      const advance = b.pricing ? b.pricing.advance : 0;
+      const canPay = !paid && b.status !== "cancelled" && b.status !== "completed";
       return `<div class="booking-card">
         <div class="bc-head">
           <div><span class="bc-emoji">${ev ? ev.emoji : "🎉"}</span><strong>${ev ? esc(ev.name) : "Celebration"}</strong></div>
@@ -266,12 +269,17 @@
           <span>⏰ ${esc(b.slot)}</span>
         </div>
         ${addNames.length ? `<div class="bc-addons">✨ ${addNames.map(esc).join(", ")}</div>` : ""}
+        <div class="bc-pay ${paid ? "ok" : ""}">${paid ? `✅ Advance paid ${rupee(b.payment.amount || advance)}` : `💳 Advance due ${rupee(advance)}`}</div>
+        <div class="bc-track" data-trackwrap="${esc(b.ref)}"></div>
         <div class="bc-foot">
           <div class="bc-price">
             <span>Ref #${esc(b.ref)}</span>
             <strong>${rupee(b.pricing ? b.pricing.total : 0)}</strong>
           </div>
           <div class="bc-actions">
+            ${canPay ? `<button class="btn btn-gold btn-sm" data-pay="${b.ref}">Pay ${rupee(advance)}</button>` : ""}
+            <button class="btn btn-ghost dark btn-sm" data-track="${b.ref}">Track</button>
+            <button class="btn btn-ghost dark btn-sm" data-invite="${b.ref}">Invite</button>
             <button class="btn btn-ghost dark btn-sm" data-share="${b.ref}">Share</button>
             <button class="btn btn-ghost dark btn-sm" data-rebook="${b.occasion}|${b.venue}">Re-book</button>
             ${canCancel ? `<button class="btn btn-danger btn-sm" data-cancel="${b.ref}">Cancel</button>` : ""}
@@ -290,6 +298,172 @@
       openBooking(occ, ven);
     }));
     $$("[data-share]", wrap).forEach((b) => b.addEventListener("click", () => shareBooking(b.dataset.share)));
+    $$("[data-pay]", wrap).forEach((b) => b.addEventListener("click", () => {
+      const rec = S.getBookings().find((x) => x.ref === b.dataset.pay);
+      if (rec) payFromBookings(rec);
+    }));
+    $$("[data-track]", wrap).forEach((b) => b.addEventListener("click", () => openTracker(b.dataset.track)));
+    $$("[data-invite]", wrap).forEach((b) => b.addEventListener("click", () => openInvitation(b.dataset.invite)));
+  }
+
+  /* ============================================================
+     FEATURE MODAL (invitation · tracker) + payment from bookings
+     ============================================================ */
+  const featureModal = $("#featureModal");
+  function openFeatureModal(title, html) {
+    if (!featureModal) return;
+    const t = $("#ftTitle"), b = $("#ftBody");
+    if (t) t.textContent = title;
+    if (b) b.innerHTML = html;
+    featureModal.classList.add("open");
+    featureModal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    return b;
+  }
+  function closeFeatureModal() {
+    if (!featureModal) return;
+    featureModal.classList.remove("open");
+    featureModal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+
+  function bookingContext(b) {
+    const ev = eventById(b.occasion), vn = venueById(b.venue);
+    return { occasionName: ev ? ev.name : "Celebration", occasionEmoji: ev ? ev.emoji : "🎉", venueName: vn ? vn.name : "UTSAVA" };
+  }
+
+  function openTracker(ref) {
+    const b = S.getBookings().find((x) => x.ref === ref);
+    if (!b || !window.FEATURES) return;
+    const steps = window.FEATURES.milestoneState(b);
+    const cancelled = b.status === "cancelled";
+    const html = `<div class="tracker">
+      ${cancelled ? `<p class="tracker-cancelled">This booking was cancelled.</p>` : ""}
+      <ol class="timeline">
+        ${steps.map((m) => `<li class="tl-step ${m.done ? "done" : ""} ${m.current ? "current" : ""}">
+          <span class="tl-dot">${m.done ? "✓" : (m.current ? "•" : "")}</span>
+          <div class="tl-main"><strong>${esc(m.label)}</strong><span>${esc(m.note)}</span></div>
+        </li>`).join("")}
+      </ol>
+      <p class="hint">Booking #${esc(b.ref)} · ${esc(b.date)} ${esc(b.slot || "")}</p>
+    </div>`;
+    openFeatureModal("Event progress", html);
+  }
+
+  function openInvitation(ref) {
+    const b = S.getBookings().find((x) => x.ref === ref);
+    if (!b || !window.FEATURES) return;
+    const ctx = bookingContext(b);
+    const svg = window.FEATURES.buildInviteSVG(b, ctx);
+    const url = window.FEATURES.svgDataUrl(svg);
+    const text = window.FEATURES.inviteText(b, ctx);
+    const html = `<div class="invite">
+      <div class="invite-preview">${svg}</div>
+      <div class="invite-actions">
+        <a class="btn btn-gold btn-sm" href="${url}" download="utsava-invite-${esc(b.ref)}.svg">Download card</a>
+        <button class="btn btn-ghost dark btn-sm" id="inviteShare">Share / copy text</button>
+        <a class="btn btn-ghost dark btn-sm" href="https://wa.me/?text=${encodeURIComponent(text)}" target="_blank" rel="noopener">Send on WhatsApp</a>
+      </div>
+    </div>`;
+    openFeatureModal("Digital invitation", html);
+    const share = $("#inviteShare");
+    if (share) share.addEventListener("click", () => {
+      if (navigator.share) navigator.share({ title: "You're invited!", text }).catch(() => {});
+      else if (navigator.clipboard) navigator.clipboard.writeText(text).then(() => toast("Invitation copied")).catch(() => toast("Copy failed"));
+      else toast("Invitation ready");
+    });
+  }
+
+  function payFromBookings(rec) {
+    const amount = rec.pricing ? rec.pricing.advance : 0;
+    if (window.FEATURES && typeof window.FEATURES.payAdvance === "function") {
+      window.FEATURES.payAdvance({
+        amount, ref: rec.ref, name: rec.name, phone: rec.phone, email: rec.email,
+        description: "Advance for booking #" + rec.ref,
+        onSuccess: (paymentId, mode) => {
+          S.patchBooking(rec.ref, { status: "confirmed", payment: { paid: true, amount, id: paymentId, mode, at: new Date().toISOString() } });
+          toast("Payment received — booking confirmed ✅");
+          renderBookings();
+        },
+        onCancel: () => toast("Payment cancelled"),
+      });
+    }
+  }
+
+  /* ============================================================
+     AI PACKAGE RECOMMENDATION (home)
+     ============================================================ */
+  function initReco() {
+    const form = $("#recoForm");
+    if (!form) return;
+    const occSel = $("#recoOcc");
+    if (occSel) occSel.innerHTML = D.events.map((e) => `<option value="${e.id}">${e.emoji} ${esc(e.name)}</option>`).join("");
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!window.FEATURES) return;
+      const input = {
+        occasion: $("#recoOcc") ? $("#recoOcc").value : "birthday",
+        guests: $("#recoGuests") ? Number($("#recoGuests").value) : 8,
+        budget: $("#recoBudget") ? Number($("#recoBudget").value) : 0,
+        vibe: $("#recoVibe") ? $("#recoVibe").value : "balanced",
+      };
+      const rec = window.FEATURES.aiRecommend(input);
+      renderRecoResult(rec);
+    });
+  }
+
+  function renderRecoResult(rec) {
+    const wrap = $("#recoResult");
+    if (!wrap) return;
+    const vn = venueById(rec.venueId);
+    const ev = eventById(rec.occasion);
+    const food = foodById(rec.foodId);
+    const theme = (D.decorThemes || []).find((t) => t.id === rec.themeId);
+    const addNames = Object.keys(rec.addOns).map((id) => { const a = addOnById(id); return a ? a.name + (rec.addOns[id] > 1 ? ` ×${rec.addOns[id]}` : "") : ""; }).filter(Boolean);
+    wrap.hidden = false;
+    wrap.innerHTML = `<div class="reco-card">
+      <div class="reco-card-head">
+        <h3>${ev ? ev.emoji : "🎉"} Your recommended package</h3>
+        <span class="reco-est">${rupee(rec.estimate.total)}</span>
+      </div>
+      <div class="reco-rows">
+        <div><span>Venue</span><strong>${vn ? esc(vn.name) : "—"}</strong></div>
+        <div><span>Guests</span><strong>${rec.guests}</strong></div>
+        <div><span>Add-ons</span><strong>${addNames.length ? esc(addNames.join(", ")) : "—"}</strong></div>
+        <div><span>Catering</span><strong>${food && food.id !== "none" ? esc(food.name) : "None"}</strong></div>
+        ${theme ? `<div><span>Theme</span><strong>${esc(theme.name)}</strong></div>` : ""}
+        <div><span>Advance</span><strong>${rupee(rec.estimate.advance)}</strong></div>
+      </div>
+      <ul class="reco-reasons">${rec.reasons.map((r) => `<li>✨ ${esc(r)}</li>`).join("")}</ul>
+      <button class="btn btn-gold" id="recoBook">Customise &amp; book this</button>
+    </div>`;
+    const btn = $("#recoBook");
+    if (btn) btn.addEventListener("click", () => openBooking(rec.occasion, rec.venueId, { guests: rec.guests, addOns: rec.addOns, foodId: rec.foodId, themeId: rec.themeId, step: 2 }));
+  }
+
+  /* ============================================================
+     VIDEO GALLERY (home)
+     ============================================================ */
+  function renderVideos() {
+    const grid = $("#videoGrid");
+    if (!grid) return;
+    grid.innerHTML = (D.videos || []).map((v) => `
+      <div class="video-card reveal ${v.theme}" data-video="${v.id}" role="button" tabindex="0">
+        <span class="vc-play">▶</span>
+        <span class="vc-dur">${esc(v.duration)}</span>
+        <div class="vc-meta"><strong>${esc(v.title)}</strong><small>👁 ${esc(v.views)} views</small></div>
+      </div>`).join("");
+    $$("[data-video]", grid).forEach((card) => {
+      const open = () => {
+        const v = (D.videos || []).find((x) => x.id === card.dataset.video);
+        openFeatureModal(v ? v.title : "Video", `<div class="video-player ${v ? v.theme : ""}">
+          <div class="vp-inner"><span class="vp-play">▶</span><p>Preview clip · ${esc(v ? v.duration : "")}</p>
+          <p class="hint">Full video streams here in production. ${esc(v ? v.views : "")} views.</p></div>
+        </div>`);
+      };
+      card.addEventListener("click", open);
+      card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); } });
+    });
   }
 
   function shareBooking(ref) {
@@ -313,19 +487,26 @@
     const prof = (window.STORE ? S.getProfile() : {}) || {};
     return {
       step: 1, eventId: null, venueId: null, guests: 0,
-      date: "", slot: "", addOns: {}, coupon: null,
+      date: "", slot: "", addOns: {}, foodId: "none", themeId: null, coupon: null,
       name: prof.name || "", phone: prof.phone || "", email: prof.email || "", notes: "",
     };
   }
 
   const modal = $("#bookingModal");
 
-  function openBooking(eventId, venueId) {
+  function openBooking(eventId, venueId, prefill) {
     const fresh = newBooking();
     fresh.eventId = eventId || null;
     fresh.venueId = venueId || null;
     const v = venueById(venueId);
     fresh.guests = v ? v.includesPeople : 0;
+    if (prefill && typeof prefill === "object") {
+      if (prefill.guests) fresh.guests = prefill.guests;
+      if (prefill.addOns) fresh.addOns = Object.assign({}, prefill.addOns);
+      if (prefill.foodId) fresh.foodId = prefill.foodId;
+      if (prefill.themeId) fresh.themeId = prefill.themeId;
+      if (prefill.step) fresh.step = prefill.step;
+    }
     Object.assign(booking, fresh);
     modal.classList.add("open");
     modal.setAttribute("aria-hidden", "false");
@@ -347,11 +528,14 @@
       return { id, price: a ? a.price : 0, qty: booking.addOns[id] };
     });
   }
+  const foodById = (id) => (D.foodPackages || []).find((f) => f.id === id);
   function priceBreakdown() {
+    const food = foodById(booking.foodId) || { perGuest: 0 };
     return P.compute({
       venue: venueById(booking.venueId),
       guests: booking.guests,
       addOnItems: selectedAddOnItems(),
+      foodPerGuest: food.perGuest,
       coupon: booking.coupon ? D.coupons.find((c) => c.code === booking.coupon) : null,
       gstRate: D.brand.gstRate,
       advancePercent: D.brand.advancePercent,
@@ -417,9 +601,21 @@
         <p class="hint">Tap to add. Use − / + to set quantity.</p>
         <div class="opt-list">
           ${D.addOns.map((a) => addOnRowHTML(a)).join("")}
+        </div>
+        <h4 style="margin-top:20px">Food &amp; catering</h4>
+        <p class="hint">Priced per guest. Choose one (optional).</p>
+        <div class="opt-list" id="foodList">
+          ${(D.foodPackages || []).map((f) => foodRowHTML(f)).join("")}
+        </div>
+        <h4 style="margin-top:20px">Decoration theme (optional)</h4>
+        <p class="hint">Pick a look — our team styles the rest.</p>
+        <div class="theme-row" id="themeRow">
+          ${(D.decorThemes || []).map((t) => `<button type="button" class="theme-chip ${booking.themeId === t.id ? "selected" : ""}" data-theme="${t.id}"><span class="tc-swatch ${t.theme}"></span>${esc(t.name)}</button>`).join("")}
         </div></div>`;
       wireGuestStepper();
       wireAddOnRows();
+      wireFoodRows();
+      wireThemeChips();
     }
 
     else if (booking.step === 3) {
@@ -455,6 +651,8 @@
       const vn = venueById(booking.venueId);
       const pr = priceBreakdown();
       const addList = selectedAddOnItems().map((it) => { const a = addOnById(it.id); return a ? `${a.name}${it.qty > 1 ? " ×" + it.qty : ""}` : ""; }).filter(Boolean);
+      const food = foodById(booking.foodId);
+      const theme = (D.decorThemes || []).find((t) => t.id === booking.themeId);
       body.innerHTML = `<div class="bk-step">
         <h4>Review & pay</h4>
         <p class="hint">Confirm details below. Pay a small advance to lock your slot.</p>
@@ -465,11 +663,14 @@
           <div class="summary-row"><span>Date</span><strong>${esc(booking.date) || "—"}</strong></div>
           <div class="summary-row"><span>Slot</span><strong>${esc(booking.slot) || "—"}</strong></div>
           <div class="summary-row"><span>Add-ons</span><strong>${addList.length ? esc(addList.join(", ")) : "None"}</strong></div>
+          <div class="summary-row"><span>Catering</span><strong>${food && food.id !== "none" ? esc(food.name) : "None"}</strong></div>
+          ${theme ? `<div class="summary-row"><span>Theme</span><strong>${esc(theme.name)}</strong></div>` : ""}
           <div class="summary-row"><span>Contact</span><strong>${esc(booking.name)} · ${esc(booking.phone)}</strong></div>
         </div>
         <div class="summary" style="margin-top:14px">
           <div class="summary-row"><span>Venue package</span><strong>${rupee(pr.venueCost)}</strong></div>
           <div class="summary-row"><span>Add-ons</span><strong>${rupee(pr.addOnsCost)}</strong></div>
+          ${pr.foodCost ? `<div class="summary-row"><span>Catering (${booking.guests} × ${rupee(food.perGuest)})</span><strong>${rupee(pr.foodCost)}</strong></div>` : ""}
           ${pr.discount ? `<div class="summary-row disc"><span>Coupon ${esc(booking.coupon)}</span><strong>− ${rupee(pr.discount)}</strong></div>` : ""}
           <div class="summary-row"><span>GST (${Math.round(D.brand.gstRate * 100)}%)</span><strong>${rupee(pr.gst)}</strong></div>
           <div class="summary-row summary-total"><span>Total</span><strong>${rupee(pr.total)}</strong></div>
@@ -537,6 +738,32 @@
     });
   }
 
+  function foodRowHTML(f) {
+    const selected = booking.foodId === f.id;
+    const priceLabel = f.perGuest > 0 ? rupee(f.perGuest) + " /guest" : "Free";
+    return `<div class="opt food-opt ${selected ? "selected" : ""}" data-food="${f.id}">
+      <span class="o-emoji">${f.veg ? "🥗" : "🍗"}</span>
+      <div class="o-main"><div class="o-title">${esc(f.name)}</div><div class="o-sub">${esc(f.desc)}${f.menu && f.menu.length ? " · " + esc(f.menu.slice(0, 3).join(", ")) : ""}</div></div>
+      <span class="o-price">${priceLabel}</span>
+      <span class="o-check">✓</span>
+    </div>`;
+  }
+  function wireFoodRows() {
+    $$("[data-food]").forEach((row) => {
+      row.addEventListener("click", () => {
+        booking.foodId = row.dataset.food;
+        $$("[data-food]").forEach((r) => r.classList.toggle("selected", r.dataset.food === booking.foodId));
+        updateTotal();
+      });
+    });
+  }
+  function wireThemeChips() {
+    $$("[data-theme]").forEach((chip) => chip.addEventListener("click", () => {
+      booking.themeId = booking.themeId === chip.dataset.theme ? null : chip.dataset.theme;
+      $$("[data-theme]").forEach((c) => c.classList.toggle("selected", c.dataset.theme === booking.themeId));
+    }));
+  }
+
   function wireGuestStepper() {
     const minus = $("#gMinus"), plus = $("#gPlus"), count = $("#gCount");
     if (!minus) return;
@@ -593,9 +820,10 @@
       occasion: booking.eventId, venue: booking.venueId, guests: booking.guests,
       date: booking.date, slot: booking.slot,
       addOns: Object.keys(booking.addOns).map((id) => ({ id, qty: booking.addOns[id] })),
+      foodId: booking.foodId || "none", themeId: booking.themeId || null,
       coupon: booking.coupon, pricing: pr,
       name: booking.name.trim(), phone: booking.phone.trim(), email: booking.email.trim(), notes: booking.notes.trim(),
-      status: "requested", createdAt: new Date().toISOString(),
+      status: "requested", payment: { paid: false }, createdAt: new Date().toISOString(),
     };
     S.saveBooking(record);
     S.saveProfile({ name: record.name, phone: record.phone, email: record.email });
@@ -604,14 +832,53 @@
       <div class="big">🎉</div>
       <h4>Booking requested!</h4>
       <p>Reference <strong>#${esc(record.ref)}</strong></p>
-      <p>Pay advance <strong>${rupee(pr.advance)}</strong> to confirm. Thank you, ${esc(record.name.split(" ")[0] || "there")}! Our team will call you shortly.</p>
+      <p>Pay advance <strong>${rupee(pr.advance)}</strong> to instantly confirm &amp; lock your slot.</p>
+      <p class="hint">Thank you, ${esc(record.name.split(" ")[0] || "there")}! Balance ${rupee(pr.balance)} at venue.</p>
     </div>`;
     $("#bkSteps").style.visibility = "hidden";
-    $("#bkFoot").innerHTML = `<button class="btn btn-gold btn-lg" style="width:100%" id="bkDone">View My Bookings</button>`;
+    $("#bkFoot").innerHTML = `
+      <button class="btn btn-gold btn-lg" style="width:100%" id="bkPay">Pay ${rupee(pr.advance)} advance</button>
+      <button class="btn btn-ghost dark btn-sm" style="width:100%;margin-top:8px" id="bkDone">Pay later · View My Bookings</button>`;
+    $("#bkPay").addEventListener("click", () => payForBooking(record.ref, pr.advance, record));
     $("#bkDone").addEventListener("click", () => { closeBooking(); restoreFoot(); navigate("bookings"); });
     launchConfetti(true);
     toast("Booking saved successfully 🎊");
     renderBookings();
+  }
+
+  /* ---- Razorpay advance payment (demo-safe) ---- */
+  function payForBooking(ref, amount, info) {
+    const b = info || S.getBookings().find((x) => x.ref === ref) || {};
+    const pay = $("#bkPay");
+    if (pay) { pay.disabled = true; pay.textContent = "Opening payment…"; }
+    const finish = (paymentId, mode) => {
+      S.patchBooking(ref, { status: "confirmed", payment: { paid: true, amount, id: paymentId, mode, at: new Date().toISOString() } });
+      renderBookings();
+      const body = $("#bkBody");
+      if (body) body.innerHTML = `<div class="confirm-banner">
+        <div class="big">✅</div>
+        <h4>Payment successful!</h4>
+        <p>Advance <strong>${rupee(amount)}</strong> received${mode === "demo" ? " (demo mode)" : ""}.</p>
+        <p>Your booking <strong>#${esc(ref)}</strong> is <strong>confirmed</strong>. 🎊</p>
+        <p class="hint">Payment ID: ${esc(paymentId)}</p>
+      </div>`;
+      const foot = $("#bkFoot");
+      if (foot) {
+        foot.innerHTML = `<button class="btn btn-gold btn-lg" style="width:100%" id="bkDone2">View My Bookings</button>`;
+        $("#bkDone2").addEventListener("click", () => { closeBooking(); restoreFoot(); navigate("bookings"); });
+      }
+      toast("Payment received — booking confirmed ✅");
+    };
+    if (window.FEATURES && typeof window.FEATURES.payAdvance === "function") {
+      window.FEATURES.payAdvance({
+        amount, ref, name: b.name, phone: b.phone, email: b.email,
+        description: "Advance for booking #" + ref,
+        onSuccess: finish,
+        onCancel: () => { if (pay) { pay.disabled = false; pay.textContent = "Pay " + rupee(amount) + " advance"; } toast("Payment cancelled"); },
+      });
+    } else {
+      finish("pay_demo_" + Date.now().toString(36), "demo");
+    }
   }
 
   function restoreFoot() {
@@ -634,6 +901,11 @@
       const phone = $("#enqPhone").value.trim();
       if (!name) return toast("Please enter your name");
       if (!P.isValidPhone(phone)) return toast("Enter a valid 10-digit phone");
+      const msg = $("#enqMsg") ? $("#enqMsg").value.trim() : "";
+      if (S.addLead) {
+        S.seedLeadsIfEmpty(D.seedLeads || []);
+        S.addLead({ id: "L-" + Date.now().toString().slice(-6), name, phone, occasion: "", message: msg, stage: "new", createdAt: new Date().toISOString() });
+      }
       toast("Thanks " + name.split(" ")[0] + "! We'll call you soon 📞");
       form.reset();
     });
@@ -642,7 +914,7 @@
   /* ============================================================
      ROUTER
      ============================================================ */
-  const VIEWS = ["home", "occasions", "venues", "gallery", "bookings"];
+  const VIEWS = ["home", "occasions", "venues", "gallery", "bookings", "admin"];
   function navigate(route) { if (location.hash !== "#/" + route) location.hash = "#/" + route; else applyRoute(); }
   function applyRoute() {
     let route = (location.hash || "#/home").replace("#/", "");
@@ -650,6 +922,7 @@
     VIEWS.forEach((v) => { const el = $("#view-" + v); if (el) el.hidden = v !== route; });
     $$("[data-route]").forEach((a) => a.classList.toggle("active", a.dataset.route === route));
     if (route === "bookings") renderBookings();
+    if (route === "admin" && window.ADMIN) window.ADMIN.render($("#adminRoot"));
     window.scrollTo({ top: 0, behavior: "auto" });
   }
 
@@ -725,6 +998,8 @@
     renderWhy();
     renderFaq();
     renderContact();
+    renderVideos();
+    initReco();
     initOccasionSearch();
     initEnquiry();
     $("#year").textContent = new Date().getFullYear();
@@ -735,7 +1010,8 @@
     });
     restoreFoot();
     $$("[data-close]").forEach((el) => el.addEventListener("click", closeBooking));
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeBooking(); });
+    $$("[data-fclose]").forEach((el) => el.addEventListener("click", closeFeatureModal));
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") { closeBooking(); closeFeatureModal(); } });
 
     window.addEventListener("hashchange", applyRoute);
     applyRoute();
@@ -751,7 +1027,7 @@
 
   // expose for debugging / tests
   window.UTSAVA_APP = {
-    openBooking, navigate, priceBreakdown,
+    openBooking, navigate, priceBreakdown, toast,
     _booking: booking,
     _next: nextStep, _prev: prevStep, _render: renderStep,
     _confirm: confirmBooking, _applyRoute: applyRoute,

@@ -14,6 +14,8 @@
     bookings: "utsava_bookings",
     favourites: "utsava_favourites",
     profile: "utsava_profile",
+    leads: "utsava_leads",
+    vendors: "utsava_vendors",
   };
 
   const mem = {}; // in-memory fallback
@@ -50,6 +52,39 @@
     const all = getBookings().map((b) => (b.ref === ref ? Object.assign({}, b, { status }) : b));
     return write(KEYS.bookings, all);
   }
+  /** Patch arbitrary fields on a booking (e.g. payment, milestone). */
+  function patchBooking(ref, patch) {
+    const all = getBookings().map((b) => (b.ref === ref ? Object.assign({}, b, patch || {}) : b));
+    return write(KEYS.bookings, all);
+  }
+
+  /* ---- Leads / CRM ---- */
+  function getLeads() { return read(KEYS.leads, null); }
+  function seedLeadsIfEmpty(seed) {
+    if (getLeads() == null) write(KEYS.leads, Array.isArray(seed) ? seed.slice() : []);
+    return getLeads() || [];
+  }
+  function addLead(lead) {
+    const all = getLeads() || [];
+    all.unshift(lead);
+    return write(KEYS.leads, all);
+  }
+  function updateLeadStage(id, stage) {
+    const all = (getLeads() || []).map((l) => (l.id === id ? Object.assign({}, l, { stage }) : l));
+    return write(KEYS.leads, all);
+  }
+
+  /* ---- Vendors ---- */
+  function getVendors() { return read(KEYS.vendors, null); }
+  function seedVendorsIfEmpty(seed) {
+    if (getVendors() == null) write(KEYS.vendors, Array.isArray(seed) ? seed.slice() : []);
+    return getVendors() || [];
+  }
+  function toggleVendorStatus(id) {
+    const all = (getVendors() || []).map((v) =>
+      v.id === id ? Object.assign({}, v, { status: v.status === "active" ? "onleave" : "active" }) : v);
+    return write(KEYS.vendors, all);
+  }
 
   /* ---- Favourites (venue ids) ---- */
   function getFavourites() { return read(KEYS.favourites, []); }
@@ -68,8 +103,10 @@
 
   return {
     KEYS,
-    getBookings, saveBooking, updateBookingStatus,
+    getBookings, saveBooking, updateBookingStatus, patchBooking,
     getFavourites, isFavourite, toggleFavourite,
     getProfile, saveProfile,
+    getLeads, seedLeadsIfEmpty, addLead, updateLeadStage,
+    getVendors, seedVendorsIfEmpty, toggleVendorStatus,
   };
 });

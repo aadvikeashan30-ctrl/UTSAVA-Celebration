@@ -54,8 +54,17 @@
   }
 
   /**
+   * Catering cost = per-guest rate * guests.
+   */
+  function foodCost(perGuest, guests) {
+    const p = Math.max(0, Number(perGuest) || 0);
+    const g = Math.max(0, Number(guests) || 0);
+    return round(p * g);
+  }
+
+  /**
    * Full price breakdown.
-   * @param opts { venue, guests, addOnItems:[{price,qty}], coupon, gstRate, advancePercent }
+   * @param opts { venue, guests, addOnItems:[{price,qty}], foodPerGuest, coupon, gstRate, advancePercent }
    */
   function compute(opts) {
     opts = opts || {};
@@ -64,7 +73,8 @@
 
     const vCost = venueCost(opts.venue, opts.guests);
     const aCost = addOnsCost(opts.addOnItems);
-    const subtotal = vCost + aCost;
+    const fCost = foodCost(opts.foodPerGuest, opts.guests);
+    const subtotal = vCost + aCost + fCost;
     const discount = couponDiscount(opts.coupon, subtotal);
     const taxable = Math.max(0, subtotal - discount);
     const tax = gst(taxable, gstRate);
@@ -75,6 +85,7 @@
     return {
       venueCost: vCost,
       addOnsCost: aCost,
+      foodCost: fCost,
       subtotal,
       discount,
       taxable,
@@ -129,7 +140,7 @@
 
   return {
     round, clamp,
-    venueCost, addOnsCost, couponDiscount, gst, compute,
+    venueCost, addOnsCost, foodCost, couponDiscount, gst, compute,
     availableSlots, isSlotAvailable,
     makeRef, isValidPhone, isValidEmail,
   };
