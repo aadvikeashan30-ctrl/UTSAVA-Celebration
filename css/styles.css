@@ -901,3 +901,128 @@ img { max-width: 100%; display: block; }
   .reco-form { grid-template-columns: repeat(4, 1fr); }
   .reco-form .btn { grid-column: 1 / -1; justify-self: start; }
 }
+
+
+/* ============================================================
+   2026 PREMIUM REDESIGN — 3D depth, glassmorphism, real photos,
+   animated gradient hero. (appended last so it takes precedence)
+   ============================================================ */
+
+/* ---- Cinematic hero ---- */
+.hero {
+  min-height: 92vh;
+  background: linear-gradient(135deg, #0c3f25 0%, #14633a 42%, #7a1136 100%);
+  perspective: 1200px;
+}
+.hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background: url("https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1600&q=80") center/cover no-repeat;
+  opacity: .26;
+  filter: saturate(1.15) contrast(1.05);
+  transform: scale(1.08);
+  animation: heroPan 24s ease-in-out infinite alternate;
+}
+.hero::after {
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(231,189,88,.35), transparent 55%),
+    linear-gradient(180deg, rgba(8,40,24,.15) 0%, rgba(8,40,24,.55) 100%);
+}
+@keyframes heroPan { from { transform: scale(1.08) translate3d(-1.5%, -1%, 0); } to { transform: scale(1.16) translate3d(1.5%, 1.5%, 0); } }
+
+.hero-glow { z-index: 1; }
+.hero-content { z-index: 3; animation: heroRise .9s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes heroRise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+
+/* floating 3D orbs */
+.hero-orbs { position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+.orb { position: absolute; border-radius: 50%; filter: blur(8px); opacity: .55; mix-blend-mode: screen; animation: float 11s ease-in-out infinite; }
+.orb.o1 { width: 220px; height: 220px; left: -40px; top: 12%; background: radial-gradient(circle at 30% 30%, #ffe9a8, #d99a14 70%); }
+.orb.o2 { width: 150px; height: 150px; right: 6%; top: 18%; background: radial-gradient(circle at 30% 30%, #ff9 ,#d6336c 70%); animation-delay: -3s; }
+.orb.o3 { width: 280px; height: 280px; right: -60px; bottom: -40px; background: radial-gradient(circle at 30% 30%, #69db7c, #14633a 70%); animation-delay: -6s; }
+.orb.o4 { width: 120px; height: 120px; left: 14%; bottom: 8%; background: radial-gradient(circle at 30% 30%, #ffd87a, #d6336c 70%); animation-delay: -1.5s; }
+@keyframes float { 0%,100% { transform: translateY(0) translateX(0); } 50% { transform: translateY(-26px) translateX(12px); } }
+
+.hero-logo { width: 132px; height: 132px; border: 3px solid rgba(231,189,88,.7); box-shadow: 0 20px 50px rgba(0,0,0,.45), 0 0 0 8px rgba(255,255,255,.06); }
+.hero-award {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,.12); border: 1px solid rgba(231,189,88,.5);
+  color: #fff8e6; padding: 9px 18px; border-radius: 999px;
+  font-size: 13px; font-weight: 600; letter-spacing: .3px;
+  backdrop-filter: blur(10px); margin-bottom: 22px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+}
+.hero h1 { text-shadow: 0 6px 30px rgba(0,0,0,.35); letter-spacing: -.03em; }
+.hero .grad-text { background: linear-gradient(120deg,#fbeeb6,#e7bd58 55%,#c89227); -webkit-background-clip: text; background-clip: text; }
+
+/* glass stat cards */
+.hero-stats { gap: 14px; flex-wrap: wrap; }
+.hero-stats div {
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18);
+  border-radius: 18px; padding: 14px 20px; backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0,0,0,.18); min-width: 96px;
+  transition: transform .3s ease;
+}
+.hero-stats div:hover { transform: translateY(-5px); }
+.hero-stats strong { background: linear-gradient(120deg,#fbeeb6,#e7bd58); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+/* curved bottom divider */
+.hero-wave {
+  position: absolute; left: 0; right: 0; bottom: -1px; z-index: 2; height: 70px;
+  background: var(--cream);
+  -webkit-mask: radial-gradient(120% 100% at 50% 100%, transparent 69%, #000 70%);
+          mask: radial-gradient(120% 100% at 50% 100%, transparent 69%, #000 70%);
+}
+
+/* ---- 3D tilt cards (events / services / how / why) ---- */
+.event-card, .service-card, .how-card, .why-card, .pkg-card, .review-card {
+  transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s ease;
+  transform-style: preserve-3d;
+}
+.event-card:hover, .service-card:hover, .how-card:hover, .why-card:hover {
+  transform: translateY(-8px) rotateX(4deg) rotateY(-3deg) scale(1.02);
+  box-shadow: 0 28px 60px rgba(122,17,54,.22);
+}
+.event-card::before { background: var(--grad-royal); height: 5px; }
+.event-emoji {
+  display: inline-grid; place-items: center; width: 60px; height: 60px; border-radius: 18px; font-size: 30px;
+  background: linear-gradient(135deg, rgba(20,99,58,.12), rgba(231,189,88,.22));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6);
+}
+
+/* ---- Venue cards with real photos ---- */
+.venue-card { grid-template-columns: 140px 1fr; border-radius: var(--radius-lg); transition: transform .3s, box-shadow .3s; }
+.venue-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
+.venue-visual { position: relative; min-height: 190px; }
+.venue-visual.has-img { background-size: cover; background-position: center; }
+.venue-visual.has-img::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.05), rgba(12,63,37,.55)); }
+.venue-visual .vv-emoji { position: absolute; left: 10px; top: 10px; z-index: 2; font-size: 22px; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; background: rgba(255,255,255,.85); box-shadow: var(--shadow-sm); }
+.venue-visual .vv-rating { position: absolute; left: 10px; bottom: 10px; z-index: 2; font-size: 12px; font-weight: 700; color: #fff; background: rgba(12,63,37,.7); padding: 4px 10px; border-radius: 999px; backdrop-filter: blur(4px); }
+.fav-btn { position: absolute; right: 10px; top: 10px; z-index: 2; }
+@media (min-width: 640px) { .venue-card { grid-template-columns: 240px 1fr; } .venue-visual { min-height: 240px; } }
+
+/* ---- Gallery photos ---- */
+.gallery-item { min-height: 150px; border-radius: var(--radius); transition: transform .3s, box-shadow .3s; }
+.gallery-item.has-img { background-size: cover; background-position: center; }
+.gallery-item:hover { transform: scale(1.03); box-shadow: var(--shadow-md); z-index: 2; }
+.gallery-item span { font-weight: 700; text-shadow: 0 2px 12px rgba(0,0,0,.6); }
+
+/* ---- Video posters ---- */
+.video-card.has-img { background-size: cover; background-position: center; }
+.video-card.has-img::before { content: ""; position: absolute; inset: 0; background: rgba(12,63,37,.12); }
+.video-card .vc-play { transition: transform .3s, background .3s; }
+.video-card:hover .vc-play { transform: translate(-50%,-50%) scale(1.12); background: #fff; }
+
+/* ---- Section vibe ---- */
+.section-head h2 { letter-spacing: -.02em; }
+.kicker { background: linear-gradient(135deg, rgba(20,99,58,.12), rgba(231,189,88,.2)); color: var(--green); }
+.btn-gold { background: linear-gradient(120deg,#fbeeb6,#e7bd58 55%,#c89227); color: #3a230f; box-shadow: 0 10px 26px rgba(200,146,39,.45); }
+.btn-gold:hover { box-shadow: 0 16px 38px rgba(200,146,39,.6); transform: translateY(-2px); }
+
+/* subtle ambient gradient on tinted sections */
+.section-tint { background: linear-gradient(180deg, #ffffff 0%, #f3fbf5 60%, #fff7ef 100%); position: relative; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-bg, .orb, .hero-content { animation: none; }
+  .event-card:hover, .service-card:hover, .how-card:hover, .why-card:hover { transform: translateY(-5px); }
+}

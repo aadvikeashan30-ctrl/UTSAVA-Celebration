@@ -80,6 +80,7 @@
         rating: 4.9,
         reviews: 1280,
         theme: "g-rose",
+        img: "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=900&q=80",
         amenities: ["4K screen", "Dolby sound", "Decoration included", "AC", "Cosy seating", "Parking"],
         tags: ["Decoration included", "Big screen", "Dolby sound", "AC"],
       },
@@ -97,6 +98,7 @@
         rating: 4.8,
         reviews: 540,
         theme: "g-indigo",
+        img: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=900&q=80",
         amenities: ["Large stage", "Valet parking", "AC", "Green rooms", "Catering kitchen", "Sound & lights"],
         tags: ["Spacious", "Stage", "Parking", "AC"],
       },
@@ -141,15 +143,15 @@
     ],
 
     gallery: [
-      { title: "Theatre Birthday", theme: "g-rose",   tag: "birthday" },
-      { title: "Balloon Arch",     theme: "g-violet", tag: "birthday" },
-      { title: "Floral Stage",     theme: "g-green",  tag: "wedding" },
-      { title: "Candle-lit Date",  theme: "g-amber",  tag: "romantic" },
-      { title: "Naming Cradle",    theme: "g-teal",   tag: "naming" },
-      { title: "Wedding Mandap",   theme: "g-indigo", tag: "wedding" },
-      { title: "Anniversary Setup",theme: "g-rose",   tag: "romantic" },
-      { title: "Baby Shower",      theme: "g-teal",   tag: "naming" },
-      { title: "Proposal Decor",   theme: "g-amber",  tag: "romantic" },
+      { title: "Theatre Birthday", theme: "g-rose",   tag: "birthday", img: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=700&q=80" },
+      { title: "Balloon Arch",     theme: "g-violet", tag: "birthday", img: "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=700&q=80" },
+      { title: "Floral Stage",     theme: "g-green",  tag: "wedding",  img: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=700&q=80" },
+      { title: "Candle-lit Date",  theme: "g-amber",  tag: "romantic", img: "https://images.unsplash.com/photo-1529636798458-92182e662485?auto=format&fit=crop&w=700&q=80" },
+      { title: "Naming Cradle",    theme: "g-teal",   tag: "naming",   img: "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=700&q=80" },
+      { title: "Wedding Mandap",   theme: "g-indigo", tag: "wedding",  img: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=700&q=80" },
+      { title: "Anniversary Setup",theme: "g-rose",   tag: "romantic", img: "https://images.unsplash.com/photo-1478146896981-b80fe463b330?auto=format&fit=crop&w=700&q=80" },
+      { title: "Baby Shower",      theme: "g-teal",   tag: "naming",   img: "https://images.unsplash.com/photo-1530891910412-92a4a0f7c3a1?auto=format&fit=crop&w=700&q=80" },
+      { title: "Proposal Decor",   theme: "g-amber",  tag: "romantic", img: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=700&q=80" },
     ],
 
     galleryFilters: [
@@ -211,12 +213,12 @@
 
     /* ---- Video gallery (poster gradients; src optional/lazy) ---- */
     videos: [
-      { id: "v1", title: "Theatre Surprise Reveal", duration: "0:48", theme: "g-rose",   tag: "birthday", views: "12.4k" },
-      { id: "v2", title: "Grand Hall Wedding Film",  duration: "1:32", theme: "g-indigo", tag: "wedding",  views: "28.1k" },
-      { id: "v3", title: "Candle-lit Proposal",      duration: "0:36", theme: "g-amber",  tag: "romantic", views: "9.8k" },
-      { id: "v4", title: "Baby Shower Highlights",   duration: "0:54", theme: "g-teal",   tag: "naming",   views: "6.2k" },
-      { id: "v5", title: "360° Venue Walkthrough",   duration: "1:10", theme: "g-green",  tag: "venue",    views: "15.7k" },
-      { id: "v6", title: "Anniversary Decor Setup",  duration: "0:41", theme: "g-violet", tag: "romantic", views: "7.5k" },
+      { id: "v1", title: "Theatre Surprise Reveal", duration: "0:48", theme: "g-rose",   tag: "birthday", views: "12.4k", img: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=700&q=80" },
+      { id: "v2", title: "Grand Hall Wedding Film",  duration: "1:32", theme: "g-indigo", tag: "wedding",  views: "28.1k", img: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=700&q=80" },
+      { id: "v3", title: "Candle-lit Proposal",      duration: "0:36", theme: "g-amber",  tag: "romantic", views: "9.8k",  img: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=700&q=80" },
+      { id: "v4", title: "Baby Shower Highlights",   duration: "0:54", theme: "g-teal",   tag: "naming",   views: "6.2k",  img: "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=700&q=80" },
+      { id: "v5", title: "360° Venue Walkthrough",   duration: "1:10", theme: "g-green",  tag: "venue",    views: "15.7k", img: "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=700&q=80" },
+      { id: "v6", title: "Anniversary Decor Setup",  duration: "0:41", theme: "g-violet", tag: "romantic", views: "7.5k",  img: "https://images.unsplash.com/photo-1478146896981-b80fe463b330?auto=format&fit=crop&w=700&q=80" },
     ],
 
     /* ---- Booking lifecycle milestones (event tracker) ---- */

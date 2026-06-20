@@ -89,8 +89,9 @@
   function venueCardHTML(v, detailed) {
     const fav = S.isFavourite(v.id);
     return `<div class="venue-card reveal ${detailed ? "is-detailed" : ""}">
-      <div class="venue-visual ${v.theme}">
+      <div class="venue-visual ${v.theme} ${v.img ? "has-img" : ""}" ${v.img ? `style="background-image:url('${v.img}')"` : ""}>
         <span class="vv-emoji">${v.id === "hall" ? "🏛️" : "🎭"}</span>
+        <span class="vv-rating">★ ${v.rating}</span>
         <button class="fav-btn ${fav ? "on" : ""}" data-fav="${v.id}" aria-label="Save venue">♥</button>
       </div>
       <div class="venue-body">
@@ -146,7 +147,7 @@
   }
 
   function galleryItemHTML(g) {
-    return `<div class="gallery-item ${g.theme} reveal" data-tag="${g.tag}"><span>${esc(g.title)}</span></div>`;
+    return `<div class="gallery-item ${g.theme} reveal ${g.img ? "has-img" : ""}" data-tag="${g.tag}" ${g.img ? `style="background-image:url('${g.img}')"` : ""}><span>${esc(g.title)}</span></div>`;
   }
   function renderGallery() {
     $("#galleryGridHome").innerHTML = D.gallery.slice(0, 6).map(galleryItemHTML).join("");
@@ -448,7 +449,7 @@
     const grid = $("#videoGrid");
     if (!grid) return;
     grid.innerHTML = (D.videos || []).map((v) => `
-      <div class="video-card reveal ${v.theme}" data-video="${v.id}" role="button" tabindex="0">
+      <div class="video-card reveal ${v.theme} ${v.img ? "has-img" : ""}" data-video="${v.id}" role="button" tabindex="0" ${v.img ? `style="background-image:url('${v.img}')"` : ""}>
         <span class="vc-play">▶</span>
         <span class="vc-dur">${esc(v.duration)}</span>
         <div class="vc-meta"><strong>${esc(v.title)}</strong><small>👁 ${esc(v.views)} views</small></div>
