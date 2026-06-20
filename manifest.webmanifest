@@ -12,6 +12,12 @@
   "lang": "en-IN",
   "icons": [
     {
+      "src": "icons/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
       "src": "icons/logo.svg",
       "sizes": "any",
       "type": "image/svg+xml",

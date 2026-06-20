@@ -50,6 +50,9 @@ See **[DESIGN.md](DESIGN.md)** for the full high-level design and market analysi
 
 > Admin demo PIN: **2468** · Razorpay uses a public **test** key — swap for a live key in production.
 
+### Adding the real Utsava logo
+The site loads the brand logo from **`icons/logo.png`** (app bar, hero, footer, PWA icon). Until that file exists it gracefully falls back to a placeholder vector. To use the real artwork, upload your image to the repo as **`icons/logo.png`** (e.g. on GitHub: open the `icons/` folder → *Add file* → *Upload files* → name it `logo.png` → commit). No code changes needed — it appears everywhere automatically.
+
 ---
 
 ## 📁 Project Structure
