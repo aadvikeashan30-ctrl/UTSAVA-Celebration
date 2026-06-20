@@ -55,11 +55,15 @@
   }
 
   function eventCardHTML(e) {
-    return `<div class="event-card reveal" data-event="${e.id}" role="button" tabindex="0">
-      <div class="event-emoji">${e.emoji}</div>
-      <h3>${esc(e.name)}</h3>
-      <p>${esc(e.blurb)}</p>
-      <span class="mini-book">Book →</span>
+    return `<div class="event-card reveal ${e.img ? "has-img" : ""}" data-event="${e.id}" role="button" tabindex="0">
+      <div class="ec-photo" ${e.img ? `style="background-image:url('${e.img}')"` : ""}>
+        <span class="ec-emoji">${e.emoji}</span>
+      </div>
+      <div class="ec-body">
+        <h3>${esc(e.name)}</h3>
+        <p>${esc(e.blurb)}</p>
+        <span class="mini-book">Book now <span aria-hidden="true">→</span></span>
+      </div>
     </div>`;
   }
   function wireEventCards(scope) {

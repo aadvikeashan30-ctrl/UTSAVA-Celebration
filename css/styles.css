@@ -1026,3 +1026,196 @@ img { max-width: 100%; display: block; }
   .hero-bg, .orb, .hero-content { animation: none; }
   .event-card:hover, .service-card:hover, .how-card:hover, .why-card:hover { transform: translateY(-5px); }
 }
+
+
+/* ============================================================
+   DESIGN SYSTEM v3 — luxury redesign (loads last → wins)
+   Premium emerald + gold + ivory · serif display type ·
+   fully responsive iOS / Android / desktop · real photos
+   ============================================================ */
+:root {
+  --font: "Plus Jakarta Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-display: "Fraunces", "Playfair Display", Georgia, serif;
+
+  --emerald: #14633a;
+  --emerald-deep: #0b3a22;
+  --emerald-bright: #1f8a4c;
+  --ivory: #fbf7ef;
+  --gold: #d4a93f;
+  --gold-soft: #e7c876;
+  --ink: #23201b;
+  --muted: #6f6a60;
+  --line: #ece3d3;
+
+  --maxw: 1240px;
+  --radius: 20px;
+  --radius-lg: 28px;
+  --shadow-sm: 0 6px 18px rgba(11,58,34,.07);
+  --shadow-md: 0 16px 40px rgba(11,58,34,.13);
+  --shadow-lg: 0 30px 70px rgba(11,58,34,.22);
+  --grad-royal: linear-gradient(135deg, #1f8a4c 0%, #14633a 55%, #0b3a22 100%);
+  --grad-gold: linear-gradient(120deg, #f3e3ab, #d4a93f 55%, #b8860b);
+}
+
+body { font-family: var(--font); background: var(--ivory); color: var(--ink); letter-spacing: -0.005em; }
+h1, h2, h3, .brand-text strong { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-optical-sizing: auto; }
+
+/* ---- App bar: premium glass ---- */
+.appbar {
+  padding-top: calc(12px + env(safe-area-inset-top));
+  background: rgba(251,247,239,.72);
+  backdrop-filter: saturate(1.4) blur(16px);
+  -webkit-backdrop-filter: saturate(1.4) blur(16px);
+  border-bottom: 1px solid rgba(212,169,63,.22);
+}
+.appbar.scrolled { background: rgba(251,247,239,.92); box-shadow: 0 8px 30px rgba(11,58,34,.08); }
+.brand-text strong { font-size: 19px; color: var(--emerald); letter-spacing: .5px; }
+.brand-text em { color: var(--gold); letter-spacing: 3px; }
+.brand-mark-img { border-radius: 50%; border: 1.5px solid rgba(212,169,63,.4); }
+.nav-links a { font-weight: 600; color: var(--ink); opacity: .82; }
+.nav-links a:hover, .nav-links a.active { color: var(--emerald); opacity: 1; }
+.nav-links a.active { position: relative; }
+.nav-links a.active::after { content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 2px; border-radius: 2px; background: var(--grad-gold); }
+
+/* ---- Buttons ---- */
+.btn { font-family: var(--font); font-weight: 700; border-radius: 999px; }
+.btn-gold { background: var(--grad-gold); color: #3a2a08; box-shadow: 0 12px 28px rgba(184,134,11,.4); }
+.btn-gold:hover { transform: translateY(-2px); box-shadow: 0 18px 40px rgba(184,134,11,.52); }
+.btn-emerald { background: var(--grad-royal); color: #fff; box-shadow: 0 12px 28px rgba(11,58,34,.32); }
+.btn-ghost.dark { color: var(--emerald); border-color: rgba(20,99,58,.4); }
+
+/* ---- Offers ticker ---- */
+.offers-bar { background: var(--emerald-deep); color: var(--gold-soft); }
+
+/* ---- Section heads ---- */
+.section { max-width: var(--maxw); }
+.kicker {
+  font-family: var(--font); font-weight: 800; letter-spacing: 2.5px; color: var(--emerald);
+  background: linear-gradient(135deg, rgba(20,99,58,.1), rgba(212,169,63,.16));
+  border: 1px solid rgba(212,169,63,.25);
+}
+.section-head h2 { font-size: clamp(28px, 6vw, 46px); }
+.section-head p { font-size: 15.5px; color: var(--muted); }
+.grad-text { background: var(--grad-gold); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+/* ---- HERO refinements ---- */
+.hero h1 { font-size: clamp(40px, 11vw, 76px); font-weight: 800; line-height: 1.04; }
+.hero-sub { font-family: var(--font); font-size: clamp(15px, 4vw, 18px); max-width: 540px; }
+.hero-award { font-family: var(--font); }
+
+/* ============================================================
+   OCCASION PHOTO CARDS
+   ============================================================ */
+.events-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.event-card {
+  padding: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius);
+  background: #fff; box-shadow: var(--shadow-sm); display: flex; flex-direction: column;
+}
+.event-card::before { display: none; }
+.ec-photo {
+  position: relative; aspect-ratio: 16 / 11; background: var(--grad-royal) center/cover no-repeat;
+}
+.ec-photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(11,58,34,.45)); }
+.ec-emoji {
+  position: absolute; left: 12px; bottom: 12px; z-index: 2; font-size: 22px;
+  width: 44px; height: 44px; display: grid; place-items: center; border-radius: 14px;
+  background: rgba(255,255,255,.92); box-shadow: var(--shadow-sm);
+}
+.ec-body { padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.ec-body h3 { font-size: 18px; }
+.ec-body p { font-size: 13px; color: var(--muted); flex: 1; }
+.mini-book { font-family: var(--font); font-weight: 700; color: var(--emerald); font-size: 13px; margin-top: 6px; }
+.event-card:hover .ec-photo { transform: none; }
+.event-card:hover .mini-book { color: var(--gold); }
+
+/* ---- Service / how / why cards ---- */
+.svc-ic { background: linear-gradient(135deg, rgba(20,99,58,.12), rgba(212,169,63,.2)); border-radius: 16px; }
+.svc-ic svg { stroke: var(--emerald); }
+.how-ic svg, .why-ic svg { stroke: var(--emerald); }
+.how-num { background: var(--grad-gold) !important; color: #3a2a08 !important; }
+.service-card, .why-card, .how-card, .pkg-card, .addon-card, .review-card, .faq-item, .contact-card {
+  border-radius: var(--radius); border-color: var(--line);
+}
+
+/* ---- Venue cards ---- */
+.venue-card { border-radius: var(--radius-lg); }
+.venue-cap { color: var(--emerald); }
+.tag { background: rgba(20,99,58,.08); color: var(--emerald); }
+.venue-foot .rate b, .venue-body h3, .summary-total strong { color: var(--emerald); }
+.rating-badge { background: rgba(212,169,63,.16); color: var(--gold); }
+
+/* ---- Footer: deep emerald premium ---- */
+.footer {
+  background: var(--emerald-deep); color: rgba(255,255,255,.82);
+  padding: 56px 22px calc(40px + env(safe-area-inset-bottom));
+  position: relative; overflow: hidden;
+}
+.footer::before {
+  content: ""; position: absolute; inset: auto 0 0 0; height: 3px; background: var(--grad-gold);
+}
+.footer .brand-text strong { color: #fff; }
+.footer .brand-text em { color: var(--gold-soft); }
+.footer p { color: rgba(255,255,255,.7); }
+.footer-links a { color: rgba(255,255,255,.78); font-weight: 600; }
+.footer-links a:hover { color: var(--gold-soft); }
+.footer small { color: rgba(255,255,255,.5); }
+
+/* ---- Bottom nav: glass + gold book ---- */
+.bottom-nav {
+  background: rgba(255,255,255,.85);
+  backdrop-filter: saturate(1.4) blur(16px);
+  -webkit-backdrop-filter: saturate(1.4) blur(16px);
+  border-top: 1px solid rgba(212,169,63,.22);
+  box-shadow: 0 -8px 30px rgba(11,58,34,.08);
+}
+.bottom-nav a.active { color: var(--emerald); }
+.bn-book { background: var(--grad-gold) !important; color: #3a2a08 !important; box-shadow: 0 10px 26px rgba(184,134,11,.5); }
+
+/* ---- Modal accents to brand ---- */
+.modal-head h3 { color: var(--emerald); font-family: var(--font-display); }
+.steps .dot.active { background: var(--grad-royal); }
+.opt.selected { border-color: var(--emerald); background: rgba(20,99,58,.05); }
+.opt.selected .o-check { background: var(--emerald); border-color: var(--emerald); }
+.opt .o-price { color: var(--emerald); }
+.chip.selected { background: var(--grad-royal); border-color: transparent; }
+.field input:focus, .field select:focus { border-color: var(--emerald); }
+.estimate strong { color: var(--emerald); }
+.fab-whatsapp { box-shadow: 0 12px 30px rgba(37,211,102,.45); }
+
+/* ============================================================
+   RESPONSIVE — phones → tablets → desktop
+   ============================================================ */
+.view { width: 100%; }
+img { -webkit-user-drag: none; }
+
+@media (min-width: 600px) {
+  .events-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 720px) {
+  .events-grid { grid-template-columns: repeat(3, 1fr); }
+  .venues-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px) {
+  .hero { min-height: 86vh; }
+  .events-grid { grid-template-columns: repeat(4, 1fr); }
+  .services-grid { grid-template-columns: repeat(4, 1fr); }
+  .gallery { grid-template-columns: repeat(4, 1fr); }
+  .video-grid { grid-template-columns: repeat(3, 1fr); }
+  .section { padding-left: 40px; padding-right: 40px; }
+  .nav-links { gap: 30px; }
+}
+@media (min-width: 1280px) {
+  .events-grid { grid-template-columns: repeat(4, 1fr); }
+  .gallery { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* large desktop: keep content centered & airy */
+@media (min-width: 1440px) {
+  .hero h1 { font-size: 80px; }
+}
+
+/* iOS: respect notches & home indicator everywhere */
+@supports (padding: max(0px)) {
+  .appbar { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+}
