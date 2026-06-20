@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Utsava Celebrations">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="72%">
+      <stop offset="0" stop-color="#1f7a46"/>
+      <stop offset="0.6" stop-color="#14633a"/>
+      <stop offset="1" stop-color="#0c3f25"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f7e7a6"/>
+      <stop offset="0.4" stop-color="#e3b34a"/>
+      <stop offset="0.7" stop-color="#c8902a"/>
+      <stop offset="1" stop-color="#f3d77a"/>
+    </linearGradient>
+    <linearGradient id="goldText" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fbeeb6"/>
+      <stop offset="0.5" stop-color="#e7bd58"/>
+      <stop offset="1" stop-color="#c89227"/>
+    </linearGradient>
+  </defs>
+
+  <!-- badge -->
+  <circle cx="256" cy="256" r="248" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="244" fill="none" stroke="url(#gold)" stroke-width="10"/>
+  <circle cx="256" cy="256" r="224" fill="none" stroke="url(#gold)" stroke-width="4" opacity="0.85"/>
+
+  <!-- decorative elephant with howdah, gold -->
+  <g fill="url(#gold)" transform="translate(106,108) scale(1.05)">
+    <!-- body -->
+    <path d="M70 150c-14 0-26-10-30-24-3-10-2-22 4-32 8-14 24-24 44-28 16-3 33-2 49 3 10 3 19 8 28 14 6 4 13 6 20 6h26c12 0 22 9 23 21 1 9-3 17-10 22-2 9-7 17-15 22 3 6 4 13 2 19l-13-4c1-6-1-12-6-16-7 4-15 6-23 6H95c-9 0-17 3-23 9z"/>
+    <!-- trunk curl -->
+    <path d="M58 126c-12 2-22-4-27-15-4-9-3-20 3-28 5-6 13-9 21-7 7 2 12 8 12 15 0 5-3 10-8 12-3 1-6 0-8-2-1 4 1 9 5 11 7 3 15 1 19-5l8 9c-6 8-16 12-25 10z"/>
+    <!-- ear detail -->
+    <path d="M150 86c14-6 30-4 42 6 8 6 13 16 13 26-10-2-20-6-28-12-10-8-18-16-27-20z" opacity="0.92"/>
+    <!-- howdah canopy -->
+    <path d="M168 60c4-10 14-16 25-16s21 6 25 16c2 5 0 10-4 13H172c-4-3-6-8-4-13z"/>
+    <path d="M180 36l13-16 13 16z"/>
+    <!-- legs -->
+    <rect x="86" y="150" width="16" height="44" rx="6"/>
+    <rect x="120" y="152" width="16" height="42" rx="6"/>
+    <rect x="180" y="150" width="16" height="44" rx="6"/>
+    <rect x="214" y="150" width="16" height="42" rx="6"/>
+    <!-- tusk -->
+    <path d="M54 120c-8 2-16 6-22 12l6 8c5-5 12-8 19-9z"/>
+  </g>
+
+  <!-- wordmark -->
+  <text x="256" y="372" text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif" font-size="84" font-weight="700"
+        fill="url(#goldText)" font-style="italic" letter-spacing="1">Utsava</text>
+  <text x="256" y="412" text-anchor="middle"
+        font-family="Poppins, 'Segoe UI', system-ui, sans-serif" font-size="26" font-weight="600"
+        fill="url(#goldText)" letter-spacing="10">CELEBRATIONS</text>
+</svg>

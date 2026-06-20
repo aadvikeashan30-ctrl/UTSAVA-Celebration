@@ -2,7 +2,7 @@
    UTSAVA Celebration — Service Worker
    Cache-first for the app shell so it works offline & installs.
    ============================================================ */
-const CACHE = "utsava-v1";
+const CACHE = "utsava-v2";
 const ASSETS = [
   "./",
   "./index.html",
@@ -10,9 +10,12 @@ const ASSETS = [
   "./js/data.js",
   "./js/pricing.js",
   "./js/store.js",
+  "./js/features.js",
+  "./js/admin.js",
   "./js/app.js",
   "./manifest.webmanifest",
   "./icons/icon.svg",
+  "./icons/logo.svg",
 ];
 
 self.addEventListener("install", (event) => {

@@ -12,7 +12,7 @@
   return {
     brand: {
       name: "UTSAVA",
-      tagline: "Celebration",
+      tagline: "Celebrations",
       motto: "Turning moments into memories",
       phone: "8884000556",
       phoneDisplay: "+91 88840 00556",
@@ -23,6 +23,8 @@
       hours: "Open all 7 days · 9:00 AM – 11:00 PM",
       gstRate: 0.18,
       advancePercent: 25,
+      razorpayKey: "rzp_test_1DP5mmOlF5G5ag", // public test key — swap for live key in production
+      adminPin: "2468", // demo admin gate
     },
 
     stats: [
@@ -180,6 +182,74 @@
       { q: "What is the advance payment?", a: "We collect 25% of the estimated total as advance to confirm your slot. The balance is paid before the event." },
       { q: "Can I cancel or reschedule?", a: "Yes — manage your booking under “My Bookings”. Cancellations follow our policy; reach out and we'll help reschedule." },
       { q: "What are your timings?", a: "Open all 7 days, 9 AM to 11 PM. Morning slots are 2 hours and evening slots are 1½ hours." },
+    ],
+
+    /* ---- Food / catering packages (priced per guest) ---- */
+    foodPackages: [
+      { id: "none",    name: "No catering",      icon: "catering", veg: true,  perGuest: 0,   desc: "Skip food — bring your own or add later.", menu: [] },
+      { id: "snacks",  name: "Snacks & Mocktails", icon: "catering", veg: true,  perGuest: 199, desc: "Assorted starters, mocktails & tea/coffee.", menu: ["2 starters", "Mocktail", "Tea / Coffee", "Cookies"] },
+      { id: "vegthali", name: "Veg Silver Thali", icon: "catering", veg: true,  perGuest: 399, desc: "Wholesome vegetarian multi-course meal.", menu: ["3 starters", "2 mains", "Dal & rice", "2 breads", "Dessert", "Salad & papad"] },
+      { id: "nonveg",  name: "Royal Non-Veg Feast", icon: "catering", veg: false, perGuest: 549, desc: "Premium non-veg spread with live counter.", menu: ["4 starters", "Chicken & mutton mains", "Biryani", "Breads", "Live counter", "2 desserts"] },
+      { id: "premium", name: "Premium Buffet",    icon: "catering", veg: false, perGuest: 749, desc: "Grand multi-cuisine buffet, veg + non-veg.", menu: ["6 starters", "Multi-cuisine mains", "Biryani & rice", "Live counters", "Chaat & soup", "Dessert bar"] },
+    ],
+
+    /* ---- Cake customisation options (used by add-on cake) ---- */
+    cakeOptions: {
+      flavours: ["Chocolate", "Vanilla", "Butterscotch", "Red Velvet", "Pineapple", "Black Forest"],
+      shapes: ["Round", "Square", "Heart", "Tier"],
+      eggless: true,
+    },
+
+    /* ---- Decoration themes ---- */
+    decorThemes: [
+      { id: "royal",   name: "Royal Mysore",   theme: "g-green",  desc: "Regal green & gold with floral mandap." },
+      { id: "pastel",  name: "Pastel Dream",   theme: "g-rose",   desc: "Soft pastels, balloons & fairy lights." },
+      { id: "neon",    name: "Neon Night",     theme: "g-violet", desc: "LED, neon signage & club vibes." },
+      { id: "floral",  name: "Floral Bliss",   theme: "g-teal",   desc: "Fresh flower walls & petal pathways." },
+      { id: "boho",    name: "Boho Chic",      theme: "g-amber",  desc: "Earthy boho drapes, pampas & macramé." },
+    ],
+
+    /* ---- Video gallery (poster gradients; src optional/lazy) ---- */
+    videos: [
+      { id: "v1", title: "Theatre Surprise Reveal", duration: "0:48", theme: "g-rose",   tag: "birthday", views: "12.4k" },
+      { id: "v2", title: "Grand Hall Wedding Film",  duration: "1:32", theme: "g-indigo", tag: "wedding",  views: "28.1k" },
+      { id: "v3", title: "Candle-lit Proposal",      duration: "0:36", theme: "g-amber",  tag: "romantic", views: "9.8k" },
+      { id: "v4", title: "Baby Shower Highlights",   duration: "0:54", theme: "g-teal",   tag: "naming",   views: "6.2k" },
+      { id: "v5", title: "360° Venue Walkthrough",   duration: "1:10", theme: "g-green",  tag: "venue",    views: "15.7k" },
+      { id: "v6", title: "Anniversary Decor Setup",  duration: "0:41", theme: "g-violet", tag: "romantic", views: "7.5k" },
+    ],
+
+    /* ---- Booking lifecycle milestones (event tracker) ---- */
+    milestones: [
+      { id: "requested", label: "Request received", icon: "calendar", note: "We got your booking request." },
+      { id: "confirmed", label: "Advance paid & confirmed", icon: "shield", note: "Slot locked. Advance received." },
+      { id: "planning",  label: "Planning & decor finalised", icon: "decor", note: "Theme, cake & add-ons confirmed." },
+      { id: "ready",     label: "Setup ready", icon: "spark", note: "Venue decorated & ready for you." },
+      { id: "completed", label: "Celebrated 🎉", icon: "heart", note: "Hope you made beautiful memories!" },
+    ],
+
+    /* ---- Vendors / staff (admin) ---- */
+    vendors: [
+      { id: "ven1", name: "Bloom & Petal Decor", role: "Decoration", phone: "9900112233", rating: 4.9, jobs: 412, status: "active" },
+      { id: "ven2", name: "ClickCraft Studios",  role: "Photography", phone: "9900445566", rating: 4.8, jobs: 286, status: "active" },
+      { id: "ven3", name: "Spice Route Catering", role: "Catering",   phone: "9900778899", rating: 4.7, jobs: 530, status: "active" },
+      { id: "ven4", name: "GlowMax Lighting",     role: "Lighting & AV", phone: "9900221144", rating: 4.6, jobs: 198, status: "active" },
+      { id: "ven5", name: "Sweet Tier Bakers",    role: "Cakes",      phone: "9900553366", rating: 4.9, jobs: 367, status: "onleave" },
+    ],
+
+    /* ---- Seed leads (admin CRM) — real enquiries get appended via STORE ---- */
+    seedLeads: [
+      { id: "L-1001", name: "Meera Iyer",   phone: "9845012345", occasion: "Birthday",     message: "Surprise theatre birthday for 8.", stage: "new",       createdAt: "2026-06-18T10:20:00Z" },
+      { id: "L-1002", name: "Rahul Gupta",  phone: "9845067890", occasion: "Anniversary",  message: "Candle-lit dinner, 25th anniversary.", stage: "contacted", createdAt: "2026-06-17T14:05:00Z" },
+      { id: "L-1003", name: "Fatima Khan",  phone: "9845054321", occasion: "Naming",       message: "Naming ceremony, ~120 guests, Grand Hall.", stage: "quoted", createdAt: "2026-06-16T09:40:00Z" },
+    ],
+
+    leadStages: [
+      { id: "new",       label: "New" },
+      { id: "contacted", label: "Contacted" },
+      { id: "quoted",    label: "Quoted" },
+      { id: "won",       label: "Won" },
+      { id: "lost",      label: "Lost" },
     ],
   };
 });

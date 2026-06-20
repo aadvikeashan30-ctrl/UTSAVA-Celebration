@@ -37,6 +37,22 @@ See **[DESIGN.md](DESIGN.md)** for the full high-level design and market analysi
 - Installable PWA (manifest + service worker, works offline) — ready for iOS & Android
 - Responsive mobile-first → tablet → desktop, accessible, reduced-motion friendly
 
+**Premium platform upgrade (v2)**
+- **New brand identity** — Utsava Celebrations elephant emblem (royal green + gold) across app, hero & PWA icon
+- **Admin Dashboard** (`#/admin`, PIN-gated) — revenue & booking analytics, bookings ops with status control, **Lead CRM** (stages + call/WhatsApp), **Vendor/staff management**
+- **Razorpay payment** — pay the advance to instantly confirm a booking; graceful demo-mode fallback offline
+- **Food & catering packages** — per-guest menus folded into transparent pricing
+- **Decoration themes** — pick a look during booking
+- **Digital invitation generator** — shareable/downloadable SVG invite card per booking
+- **Event progress tracker** — milestone timeline per booking
+- **Video gallery & 360° tours** — preview grid on home
+- **AI package recommendation** — occasion + guests + budget + vibe → a ready-to-book, budget-tuned package
+
+> Admin demo PIN: **2468** · Razorpay uses a public **test** key — swap for a live key in production.
+
+### Adding the real Utsava logo
+The site loads the brand logo from **`icons/logo.png`** (app bar, hero, footer, PWA icon). Until that file exists it gracefully falls back to a placeholder vector. To use the real artwork, upload your image to the repo as **`icons/logo.png`** (e.g. on GitHub: open the `icons/` folder → *Add file* → *Upload files* → name it `logo.png` → commit). No code changes needed — it appears everywhere automatically.
+
 ---
 
 ## 📁 Project Structure
