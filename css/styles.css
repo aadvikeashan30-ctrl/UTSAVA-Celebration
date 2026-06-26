@@ -1219,3 +1219,90 @@ img { -webkit-user-drag: none; }
 @supports (padding: max(0px)) {
   .appbar { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
 }
+
+
+/* ============================================================
+   2026 ENHANCEMENTS v4 — scroll progress, grain, spotlight tilt,
+   gradient-mesh ambience, gradient borders, back-to-top
+   ============================================================ */
+
+/* ---- top scroll progress ---- */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 300;
+  background: var(--grad-gold); transform-origin: 0 50%; transform: scaleX(0);
+  box-shadow: 0 0 10px rgba(212,169,63,.6);
+}
+
+/* ---- subtle film grain for premium depth ---- */
+body::after {
+  content: ""; position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: .035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+/* ---- ambient gradient-mesh on light sections ---- */
+.section-tint::before {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .8;
+  background:
+    radial-gradient(40% 50% at 12% 18%, rgba(31,138,76,.10), transparent 60%),
+    radial-gradient(36% 46% at 88% 12%, rgba(212,169,63,.12), transparent 60%),
+    radial-gradient(50% 60% at 70% 90%, rgba(20,99,58,.08), transparent 60%);
+}
+.section-tint > * { position: relative; z-index: 1; }
+
+/* ---- cursor-reactive 3D tilt + spotlight ---- */
+.tilt3d {
+  position: relative; transform-style: preserve-3d; will-change: transform;
+  transition: transform .25s cubic-bezier(.2,.7,.2,1), box-shadow .25s ease;
+}
+.tilt3d:hover { box-shadow: var(--shadow-lg); }
+.tilt3d::after {
+  content: ""; position: absolute; inset: 0; z-index: 4; pointer-events: none; opacity: 0;
+  border-radius: inherit; transition: opacity .3s;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,.28), transparent 60%);
+}
+.tilt3d:hover::after { opacity: 1; }
+/* keep photo overlays above the spotlight where needed */
+.gallery-item span, .video-card .vc-meta, .video-card .vc-play, .video-card .vc-dur, .ec-emoji { z-index: 5; }
+
+/* ---- premium gradient (conic) border on hero stats & reco ---- */
+.hero-stats div, .reco-card {
+  position: relative; isolation: isolate;
+}
+.reco-card::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; padding: 1.5px;
+  background: conic-gradient(from 180deg, var(--gold), var(--emerald-bright), var(--gold-soft), var(--gold));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+}
+
+/* ---- back-to-top floating control ---- */
+.to-top {
+  position: fixed; right: 16px; bottom: 84px; z-index: 80;
+  width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(212,169,63,.45);
+  background: rgba(255,255,255,.85); backdrop-filter: blur(10px);
+  color: var(--emerald); font-size: 20px; cursor: pointer;
+  box-shadow: var(--shadow-md); opacity: 0; transform: translateY(14px) scale(.9);
+  transition: opacity .3s, transform .3s; pointer-events: none;
+}
+.to-top.show { opacity: 1; transform: none; pointer-events: auto; }
+@media (min-width: 720px) { .to-top { bottom: 24px; right: 24px; } }
+
+/* ---- richer hover for premium buttons (magnetic feel) ---- */
+.btn-gold, .btn-emerald { position: relative; overflow: hidden; }
+.btn-gold::after, .btn-emerald::after {
+  content: ""; position: absolute; top: 0; left: -120%; width: 60%; height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.55), transparent);
+  transform: skewX(-20deg); transition: left .6s ease;
+}
+.btn-gold:hover::after, .btn-emerald:hover::after { left: 140%; }
+
+/* ---- gallery: refined uniform luxury tiles ---- */
+.gallery-item { aspect-ratio: 1 / 1; min-height: 0; }
+@media (min-width: 1024px) { .gallery-item { aspect-ratio: 4 / 5; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-progress, .tilt3d::after, .btn-gold::after, .btn-emerald::after { display: none; }
+  .tilt3d { transform: none !important; }
+}
